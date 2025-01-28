@@ -3,9 +3,9 @@ import { UserRepository } from "../database/dbmodel/user";
 import { ReviewRepository } from "../database/dbmodel/review";
 
 export class Config {
-    
-    public reviewRepository: ReviewRepository;
-    public userRepository: UserRepository;
+    // ! When you add a new repository, you need to add a getter for it and edit the AController class
+    private reviewRepository: ReviewRepository;
+    private userRepository: UserRepository;
     private pool: Pool;
 
     constructor() {
@@ -23,4 +23,12 @@ export class Config {
         this.userRepository = new UserRepository(this.pool);
     }
 
+    // Those repository getter allosw to simulates pointers to the repositories
+    public getReviewRepository(): ReviewRepository {
+        return this.reviewRepository;
+    }
+
+    public getUserRepository(): UserRepository {
+        return this.userRepository;
+    }
 }
