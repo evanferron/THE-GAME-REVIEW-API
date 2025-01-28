@@ -1,8 +1,6 @@
-import e, { Request, Response, NextFunction } from "express";
-import bcrypt from "bcrypt";
-import { errorHandler } from "../../error/middleware";
-import { parse } from "path";
+import { Request, Response, NextFunction } from "express";
 import { parseToken } from "./jwt";
+import { ApiError, ValidationError } from "../../error/ApiError";
 
 /**
  * 
@@ -26,7 +24,7 @@ export async function authMiddleware(req: Request, res: Response, next: NextFunc
         req.body.isAdmin = tokenData.isAdmin;
         next();
     } catch (err) {
-        if(err instanceof AppError){
+        if(err instanceof ApiError){
             res.status(err.statusCode).json({ message: err.message });
         }else{
             res.status(500).json({ message: "An unexpected error occurred" });

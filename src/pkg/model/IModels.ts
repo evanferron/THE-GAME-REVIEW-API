@@ -1,7 +1,7 @@
-interface IRequestModel {
+export interface IRequestModel {
     
 }
 
-interface IResponseModel{
+export interface IResponseModel{
 
 }

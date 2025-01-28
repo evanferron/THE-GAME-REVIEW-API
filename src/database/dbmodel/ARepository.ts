@@ -1,4 +1,5 @@
 import { Pool } from "pg";
+import { IResponseModel } from "../../pkg/model/IModels";
 
 export abstract class ARepository<MyEntry extends AEntry>{
     protected db: Pool;

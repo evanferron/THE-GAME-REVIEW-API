@@ -26,7 +26,7 @@
     "build": "npx tsc",
     "start": "node index.js",
     "dev": "nodemon index.ts",
-    "create_database":"node create_database.ts"
+    "create_database":"nodemon create_local_database.ts"
   },
   "repository": {
     "type": "git",

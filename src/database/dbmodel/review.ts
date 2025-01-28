@@ -1,5 +1,6 @@
 import { Pool } from "pg";
 import { AEntry, ARepository } from "./ARepository";
+import { IResponseModel } from "../../pkg/model/IModels";
 
 export class ReviewRepository extends ARepository<ReviewEntry>{
 

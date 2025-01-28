@@ -1,4 +1,4 @@
-class AppError extends Error {
+export class ApiError extends Error {
     public readonly statusCode: number;
     public readonly isOperational: boolean;
 
@@ -12,19 +12,19 @@ class AppError extends Error {
     }
 }
 
-class NotFoundError extends AppError {
+export class NotFoundError extends ApiError {
     constructor(resource: string) {
         super(`${resource} not found`, 404);
     }
 }
 
-class ValidationError extends AppError {
+export class ValidationError extends ApiError {
     constructor(message: string) {
         super(message, 400);
     }
 }
 
-class UnauthorizedError extends AppError {
+export class UnauthorizedError extends ApiError {
     constructor(message = "Unauthorized") {
         super(message, 401);
     }
