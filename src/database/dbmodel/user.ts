@@ -1,4 +1,12 @@
-class UserRepository extends ARepository<UserEntry>{
+import { Pool } from "pg";
+import { AEntry, ARepository } from "./ARepository";
+
+export class UserRepository extends ARepository<UserEntry>{
+
+    public constructor(db : Pool) {
+        super(db);
+    }
+
     ToModel(): IResponseModel {
         throw new Error("Method not implemented.");
     }

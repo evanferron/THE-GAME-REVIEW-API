@@ -1,4 +1,12 @@
-class ReviewRepository extends ARepository<ReviewEntry>{
+import { Pool } from "pg";
+import { AEntry, ARepository } from "./ARepository";
+
+export class ReviewRepository extends ARepository<ReviewEntry>{
+
+    public constructor(db : Pool) {
+        super(db);
+    }
+
     ToModel(): IResponseModel {
         throw new Error("Method not implemented.");
     }

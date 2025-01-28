@@ -1,17 +1,22 @@
-abstract class ARepository<T extends AEntry>{
-    // todo : add a static variable that allow to access the database
-    static db: any;
+import { Pool } from "pg";
+
+export abstract class ARepository<MyEntry extends AEntry>{
+    protected db: Pool;
+
+    constructor(db: Pool){
+        this.db = db;
+    }
 
     abstract ToModel(): IResponseModel;
 
     // CRUD operations
-    abstract GetAll(): AEntry[];
-    abstract GetById(id: number): AEntry;
-    abstract Create(entry: AEntry): AEntry;
-    abstract Update(entry: AEntry): AEntry;
-    abstract Delete(entry: AEntry): AEntry;
+    abstract GetAll(): MyEntry[];
+    abstract GetById(id: number): MyEntry;
+    abstract Create(entry: MyEntry): MyEntry;
+    abstract Update(entry: MyEntry): MyEntry;
+    abstract Delete(entry: MyEntry): MyEntry;
 
 }
 
-abstract class AEntry{     
+export abstract class AEntry{     
 }
