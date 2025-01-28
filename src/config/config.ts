@@ -9,13 +9,12 @@ export class Config {
     private pool: Pool;
 
     constructor() {
-        // TODO : Edit those variables to match your database configuration
         this.pool = new Pool({
-            user: "your_db_user",
-            host: "localhost",
-            database: "your_db_name",
-            password: "your_db_password",
-            port: 5432,
+            host: process.env.DB_HOST,
+            port: parseInt(process.env.DB_PORT || '5432'),
+            user: process.env.DB_USER,
+            password: process.env.DB_PASSWORD,
+            database: process.env.DB_NAME,
         })
         
         // TODO : Initialize repositories here
@@ -30,5 +29,15 @@ export class Config {
 
     public getUserRepository(): UserRepository {
         return this.userRepository;
+    }
+
+    public async testConnection() {
+        try {
+            const client = await this.pool.connect();
+            console.log("Connected to PostgreSQL database!");
+            client.release();  // Libération de la connexion après l'utilisation
+        } catch (error) {
+            console.error("Error connecting to PostgreSQL:", error);
+        }
     }
 }
