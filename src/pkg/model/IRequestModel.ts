@@ -1,0 +1,7 @@
+interface IRequestModel {
+    
+}
+
+interface IResponseModel{
+
+}
