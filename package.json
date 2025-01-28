@@ -24,9 +24,9 @@
   },
   "scripts": {
     "build": "npx tsc",
-    "start": "node dist/index.js",
-    "dev": "nodemon dist/index.ts",
-    "create_database":"node dist/create_database.ts"
+    "start": "node index.js",
+    "dev": "nodemon index.ts",
+    "create_database":"node create_database.ts"
   },
   "repository": {
     "type": "git",
