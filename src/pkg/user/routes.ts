@@ -1,16 +1,16 @@
 import { Router } from "express";
 import { Config } from "../../config/config";
 import { UserController } from "./controller";
-import { authMiddleware } from "../auth/middleware";
+import { authMiddleware } from "../../middleware/auth";
 
-export function Routes(config:Config):Router{
+export function Routes(config: Config): Router {
     const router = Router();
     const userController = new UserController(config);
 
     router.get("/", userController.getAllUsers);
     router.get("/:id", userController.getUserById);
-    router.put("/",authMiddleware, userController.updateUser);
-    router.delete("/",authMiddleware, userController.deleteUser);
+    router.put("/", authMiddleware, userController.updateUser);
+    router.delete("/", authMiddleware, userController.deleteUser);
 
     return router;
 }

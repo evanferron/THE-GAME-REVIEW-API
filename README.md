@@ -7,5 +7,3 @@ Projet fil rouge b3
 In git bash :
 
 npm i
-
-npm run dev

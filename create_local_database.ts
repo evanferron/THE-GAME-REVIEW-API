@@ -17,6 +17,8 @@ const createDatabaseAndTables = async () => {
   const client = await pool.connect();
 
   try {
+    const createDatabaseQuery = `CREATE DATABASE ${process.env.DB_NAME}`;
+    await client.query(createDatabaseQuery);
     // Création des tables
     const createTablesQuery = `
     CREATE EXTENSION IF NOT EXISTS "pgcrypto";
