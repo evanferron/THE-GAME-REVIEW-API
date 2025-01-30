@@ -1,129 +1,154 @@
-# 📌 Guide de Développement
+# Guide de Développement
 
-## 📂 Architecture du projet
+## 1. Introduction
 
-Ce projet suit une organisation modulaire et claire pour assurer une bonne maintenabilité et évolutivité. Voici un aperçu des dossiers principaux et de leur rôle :
+Ce document est destiné aux développeurs travaillant sur ce projet. Il explique la structure du projet, les conventions de développement et la manière d'ajouter de nouvelles fonctionnalités.
+
+## 2. Structure du Projet
 
 ```
+├── .env
+├── .env.exemple
+├── .gitignore
+├── create_local_database.ts
+├── DEV.README.md
+├── index.ts
+├── package-lock.json
+├── package.json
+├── README.md
 ├── src
-│  ├── base         # Classes abstraites servant de base aux contrôleurs, repositories et erreurs
-│  ├── config       # Fichiers de configuration globale
-│  ├── database     # Gestion de la base de données et repositories
-│  ├── docs         # Documentation du projet
-│  ├── modules      # Contient les fonctionnalités principales de l'API (auth, user, review...)
-│  ├── shared       # Ressources réutilisables dans tout le projet (middlewares, erreurs, utils...)
-└── tsconfig.json   # Configuration TypeScript
+│  ├── base                # Classes de base pour une architecture commune
+│  │  ├── AController.ts   # Classe parent des controllers
+│  │  ├── AError.ts        # Classe parent des erreurs
+│  │  └── ARepository.ts   # Classe parent des repositories
+│  ├── config              # Configuration du projet
+│  │  └── config.ts
+│  ├── database            # Connexion à la base de données et repositories
+│  │  ├── database.ts
+│  │  └── repositories
+│  │    ├── review.ts
+│  │    └── user.ts
+│  ├── docs                # Documentation
+│  ├── modules             # Modules indépendants
+│  │  ├── auth             # Gestion de l'authentification
+│  │  │  ├── controller.ts
+│  │  │  └── routes.ts
+│  │  ├── review          # Module Review
+│  │  │  ├── controller.ts
+│  │  │  └── routes.ts
+│  │  └── user            # Module User
+│  │    ├── controller.ts
+│  │    └── routes.ts
+│  ├── routes              # Gestion centralisée des routes
+│  │  └── index.ts
+│  └── shared              # Code réutilisable
+│    ├── error
+│    │  └── ApiError.ts    # Gestion des erreurs applicatives
+│    ├── index.ts
+│    ├── middleware       # Middleware d’authentification et d’erreurs
+│    │  ├── auth.ts
+│    │  └── error.ts
+│    ├── models           # Interfaces et modèles globaux
+│    │  └── IModels.ts
+│    └── utils            # Utilitaires
+│      └── jwt.ts         # Gestion des JWT
+├── tree.tree
+└── tsconfig.json
 ```
 
-### 📌 Détail des dossiers
+## 3. Fonctionnement de la Configuration (`Config.ts`)
 
-- **`base/`** : Contient les classes abstraites utilisées pour factoriser du code commun.
+Le fichier `Config.ts` centralise la gestion des repositories et la connexion à la base de données. Il est instancié une seule fois dans `index.ts` et injecté dans les controllers.
 
-  - `AController.ts` : Classe parent des contrôleurs.
-  - `AError.ts` : Classe de base pour gérer les erreurs personnalisées.
-  - `ARepository.ts` : Classe générique pour la gestion des repositories.
-
-- **`config/`** : Contient la configuration globale, notamment la connexion à la base de données.
-
-- **`database/`** : Gestion de la base de données.
-
-  - `database.ts` : Configuration et connexion à la base de données.
-  - `repositories/` : Contient les classes de gestion des modèles (User, Review...).
-
-- **`docs/`** : Contient la documentation de l'API.
-
-- **`modules/`** : Chaque sous-dossier représente une fonctionnalité indépendante de l'API.
-
-  - `auth/` : Gestion de l'authentification.
-  - `user/` : Gestion des utilisateurs.
-  - `review/` : Gestion des avis.
-  - Chaque module contient généralement un `controller.ts` et un `routes.ts`.
-
-- **`shared/`** : Contient des ressources partagées dans l'application.
-  - `error/` : Gestion des erreurs personnalisées (`ApiError.ts`).
-  - `middleware/` : Middleware pour Express (`auth.ts`, `error.ts`).
-  - `models/` : Interfaces et types globaux (`IModels.ts`).
-  - `utils/` : Fonctions utilitaires réutilisables (`jwt.ts`).
-
----
-
-## 🚀 Ajouter une nouvelle fonctionnalité
-
-Pour ajouter une nouvelle fonctionnalité (par exemple "produits"), voici les étapes à suivre :
-
-### 1️⃣ **Créer un dossier dans `modules/`**
-
-```sh
-mkdir src/modules/product
-cd src/modules/product
-```
-
-### 2️⃣ **Créer les fichiers de base**
-
-#### `controller.ts`
+### Exemple d'utilisation dans un Controller :
 
 ```ts
-import { Request, Response } from "express";
-import { AController } from "../../base/AController";
-import { Config } from "../../config/config";
-
-export class ProductController extends AController {
+export class UserController extends AController {
   constructor(config: Config) {
     super(config);
   }
 
-  public getAllProducts(req: Request, res: Response) {
-    res.json({ message: "Liste des produits" });
+  public getAllUsers(req: Request, res: Response) {
+    const users = this.getUserRepository().GetAll();
+    res.json(users);
   }
 }
 ```
 
-#### `routes.ts`
+## 4. Ajouter une Nouvelle Fonctionnalité
+
+### Étape 1 : Créer un nouveau module
+
+Ajoutez un dossier dans `modules/` avec un `controller.ts` et un `routes.ts`.
+
+```sh
+mkdir src/modules/newModule
+```
+
+### Étape 2 : Créer un Controller
+
+Dans `src/modules/newModule/controller.ts` :
+
+```ts
+import { Config } from "../../config/config";
+import { AController } from "../../base/AController";
+import { Request, Response } from "express";
+
+export class NewModuleController extends AController {
+  constructor(config: Config) {
+    super(config);
+  }
+
+  public getData(req: Request, res: Response) {
+    res.json({ message: "Hello from new module" });
+  }
+}
+```
+
+### Étape 3 : Ajouter les Routes
+
+Dans `src/modules/newModule/routes.ts` :
 
 ```ts
 import { Router } from "express";
-import { ProductController } from "./controller";
 import { Config } from "../../config/config";
+import { NewModuleController } from "./controller";
 
-const router = Router();
-const productController = new ProductController(new Config());
+export function createNewModuleRoutes(config: Config): Router {
+  const router = Router();
+  const controller = new NewModuleController(config);
 
-router.get("/", (req, res) => productController.getAllProducts(req, res));
-
-export default router;
+  router.get("/", controller.getData);
+  return router;
+}
 ```
 
-### 3️⃣ **Enregistrer les routes dans `index.ts`**
+### Étape 4 : Ajouter le module dans `index.ts`
 
-Dans le fichier `index.ts` à la racine du projet, ajouter :
+Dans `src/index.ts`, ajoutez :
 
 ```ts
-import productRoutes from "./src/modules/product/routes";
-
-app.use("/api/products", productRoutes);
+import { createNewModuleRoutes } from "./src/modules/newModule/routes";
+app.use("/newModule", createNewModuleRoutes(config));
 ```
 
-### 4️⃣ **Tester l'API**
+## 5. Gestion des Erreurs
 
-Démarrer le serveur et tester la nouvelle route :
+Les erreurs sont centralisées dans `shared/error/ApiError.ts`. Exemple :
+
+```ts
+export class NotFoundError extends AError {
+  constructor(resource: string) {
+    super(`${resource} not found`, 404);
+  }
+}
+```
+
+Les middlewares d’erreur sont dans `shared/middleware/error.ts` et doivent être placés **en dernier** dans `index.ts`.
+
+## 6. Lancer le Projet
 
 ```sh
+npm install
 npm run dev
 ```
-
-Puis accéder à :
-
-```
-GET http://localhost:3000/api/products
-```
-
----
-
-## 🎯 Bonnes pratiques
-
-✅ Respecter l'organisation en modules.
-✅ Utiliser `shared/` pour les fonctionnalités réutilisables.
-✅ Toujours valider les entrées des utilisateurs.
-✅ Ajouter des tests unitaires et d'intégration.
-
-🚀 **Bonne dev et happy coding !**
