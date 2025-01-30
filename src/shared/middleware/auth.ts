@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { parseToken } from "../../modules/auth/jwt";
+import { parseToken } from "../utils/jwt";
 import { ValidationError } from "../";
 import { AError } from "../../base/AError";
 

@@ -1,11 +1,8 @@
-// src/index.ts
-import express, { Express, Request, Response } from "express";
+import express, { Express } from "express";
 import dotenv from "dotenv";
 import { errorHandler } from "./src/shared/middleware/error";
 import { Config } from "./src/config/config";
-import { Routes as AuthRoutes } from "./src/modules/auth/routes";
-import { Routes as UserRoutes } from "./src/modules/user/routes";
-import { Routes as ReviewRoutes } from "./src/modules/review/routes";
+import { createAppRoutes } from "./src/routes";
 
 dotenv.config();
 
@@ -15,10 +12,7 @@ const port = process.env.PORT || 3000;
 app.use(express.json());
 
 const config = new Config();
-
-app.use("/auth", AuthRoutes(config));
-app.use("/user", UserRoutes(config));
-app.use("/review", ReviewRoutes(config));
+app.use(createAppRoutes(config));
 
 // ! The error handler must be the last middleware
 app.use(errorHandler);

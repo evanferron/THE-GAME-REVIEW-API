@@ -3,7 +3,7 @@ import { Config } from "../../config/config";
 import { ReviewController } from "./controller";
 import { authMiddleware } from "../../shared/middleware/auth";
 
-export function Routes(config: Config): Router {
+export function createReviewRoutes(config: Config): Router {
     const router = Router();
     const reviewController = new ReviewController(config);
 

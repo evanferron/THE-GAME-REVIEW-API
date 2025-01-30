@@ -2,7 +2,7 @@ import { Router } from "express";
 import { Config } from "../../config/config";
 import { AuthController } from "./controller";
 
-export function Routes(config:Config):Router{
+export function createAuthRoutes(config: Config): Router {
     const router = Router();
     const authController = new AuthController(config);
 
