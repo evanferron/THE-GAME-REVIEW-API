@@ -1,12 +1,7 @@
-import { Pool } from "pg";
-import { AEntry, ARepository } from "../../base/ARepository";
-import { IResponseModel } from "../../shared/models/IModels";
-
+import { ARepository } from "../../base/ARepository";
+import { UserEntry } from "../../shared/models/db/user";
+import { IResponseModel } from "../../base/IResponse";
 export class UserRepository extends ARepository<UserEntry> {
-
-    public constructor(db: Pool) {
-        super(db);
-    }
 
     ToModel(): IResponseModel {
         throw new Error("Method not implemented.");
@@ -26,9 +21,5 @@ export class UserRepository extends ARepository<UserEntry> {
     Delete(entry: UserEntry): UserEntry {
         throw new Error("Method not implemented.");
     }
-
-}
-
-class UserEntry extends AEntry {
 
 }

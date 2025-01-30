@@ -5,7 +5,8 @@
     "express": "^4.21.2",
     "jsonwebtoken": "^9.0.2",
     "ms": "^2.1.3",
-    "pg": "^8.13.1"
+    "pg": "^8.13.1",
+    "zod": "^3.24.1"
   },
   "name": "the-game-review-api",
   "version": "1.0.0",
@@ -26,7 +27,7 @@
     "build": "npx tsc",
     "start": "node index.js",
     "dev": "nodemon index.ts",
-    "create_database":"nodemon create_local_database.ts"
+    "create_database": "nodemon create_local_database.ts"
   },
   "repository": {
     "type": "git",
