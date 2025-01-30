@@ -1,4 +1,4 @@
-export class ApiError extends Error {
+export class AError extends Error {
     public readonly statusCode: number;
     public readonly isOperational: boolean;
 
@@ -9,23 +9,5 @@ export class ApiError extends Error {
         this.isOperational = isOperational;
 
         Error.captureStackTrace(this, this.constructor); // Capture the stack trace
-    }
-}
-
-export class NotFoundError extends ApiError {
-    constructor(resource: string) {
-        super(`${resource} not found`, 404);
-    }
-}
-
-export class ValidationError extends ApiError {
-    constructor(message: string) {
-        super(message, 400);
-    }
-}
-
-export class UnauthorizedError extends ApiError {
-    constructor(message = "Unauthorized") {
-        super(message, 401);
     }
 }

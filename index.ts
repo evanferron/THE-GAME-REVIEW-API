@@ -1,11 +1,11 @@
 // src/index.ts
 import express, { Express, Request, Response } from "express";
 import dotenv from "dotenv";
-import { errorHandler } from "./src/middleware/error";
+import { errorHandler } from "./src/shared/middleware/error";
 import { Config } from "./src/config/config";
-import { Routes as AuthRoutes } from "./src/pkg/auth/routes";
-import { Routes as UserRoutes } from "./src/pkg/user/routes";
-import { Routes as ReviewRoutes } from "./src/pkg/review/routes";
+import { Routes as AuthRoutes } from "./src/modules/auth/routes";
+import { Routes as UserRoutes } from "./src/modules/user/routes";
+import { Routes as ReviewRoutes } from "./src/modules/review/routes";
 
 dotenv.config();
 

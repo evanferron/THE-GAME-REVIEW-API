@@ -1,11 +1,11 @@
 import { Pool } from "pg";
-import { UserRepository } from "../database/dbmodel/user";
-import { ReviewRepository } from "../database/dbmodel/review";
+import { UserRepository } from "../database/repositories/user";
+import { ReviewRepository } from "../database/repositories/review";
 
 export class Config {
     // ! When you add a new repository, you need to add a getter for it and edit the AController class
-    private reviewRepository: ReviewRepository;
-    private userRepository: UserRepository;
+    public reviewRepository: ReviewRepository;
+    public userRepository: UserRepository;
     private pool: Pool;
 
     constructor() {
@@ -16,9 +16,9 @@ export class Config {
             password: process.env.DB_PASSWORD,
             database: process.env.DB_NAME,
         })
-        
+
         // TODO : Initialize repositories here
-        this.reviewRepository = new ReviewRepository(this.pool); 
+        this.reviewRepository = new ReviewRepository(this.pool);
         this.userRepository = new UserRepository(this.pool);
     }
 

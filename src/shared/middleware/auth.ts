@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
-import { parseToken } from "../pkg/auth/jwt";
-import { ApiError, ValidationError } from "../error/ApiError";
+import { parseToken } from "../../modules/auth/jwt";
+import { ValidationError } from "../";
+import { AError } from "../../base/AError";
 
 /**
  * 
@@ -24,7 +25,7 @@ export async function authMiddleware(req: Request, res: Response, next: NextFunc
         req.body.isAdmin = tokenData.isAdmin;
         next();
     } catch (err) {
-        if (err instanceof ApiError) {
+        if (err instanceof AError) {
             res.status(err.statusCode).json({ message: err.message });
         } else {
             res.status(500).json({ message: "An unexpected error occurred" });

@@ -1,10 +1,10 @@
 import { Pool } from "pg";
-import { IResponseModel } from "../../pkg/model/IModels";
+import { IResponseModel } from "../shared/models/IModels";
 
-export abstract class ARepository<MyEntry extends AEntry>{
+export abstract class ARepository<MyEntry extends AEntry> {
     protected db: Pool;
 
-    constructor(db: Pool){
+    constructor(db: Pool) {
         this.db = db;
     }
 
@@ -19,5 +19,5 @@ export abstract class ARepository<MyEntry extends AEntry>{
 
 }
 
-export abstract class AEntry{     
+export abstract class AEntry {
 }
