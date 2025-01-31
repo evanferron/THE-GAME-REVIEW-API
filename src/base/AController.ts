@@ -1,10 +1,11 @@
 import { Config } from "../config/config";
+import { ReviewRepository } from "../database/repositories/review";
 import { UserRepository } from "../database/repositories/user";
 
 
 export abstract class AController {
     protected readonly getUserRepository: () => UserRepository;
-    protected readonly getReviewRepository: () => UserRepository;
+    protected readonly getReviewRepository: () => ReviewRepository;
 
 
     constructor(config: Config) {

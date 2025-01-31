@@ -2,7 +2,7 @@ import { Router } from "express";
 import { Config } from "../../config/config";
 import { AuthController } from "./controller";
 import { validateRequest } from "../../shared/middleware/validateFormat";
-import { CreateUserSchema } from "../../shared/models/request/user";
+import { CreateUserSchema } from "../../shared";
 
 export function createAuthRoutes(config: Config): Router {
     const router = Router();

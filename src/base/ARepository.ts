@@ -14,7 +14,6 @@ export abstract class ARepository<MyEntry extends IEntry> {
     abstract ToModel(entry: MyEntry): IResponseModel;
 
     // CRUD operations
-    abstract GetAll(): MyEntry[];
     abstract Create(entry: MyEntry): MyEntry;
     abstract Update(entry: MyEntry): MyEntry;
     abstract Delete(entry: MyEntry): MyEntry;
