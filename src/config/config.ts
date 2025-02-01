@@ -18,8 +18,8 @@ export class Config {
         })
 
         // TODO : Initialize repositories here
-        this.reviewRepository = new ReviewRepository(this.pool, "review");
-        this.userRepository = new UserRepository(this.pool, "user");
+        this.reviewRepository = new ReviewRepository(this.pool);
+        this.userRepository = new UserRepository(this.pool);
     }
 
     // Those repository getter allosw to simulates pointers to the repositories

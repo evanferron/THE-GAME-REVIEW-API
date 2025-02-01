@@ -1,20 +1,24 @@
+import { Pool } from "pg";
+import { SuccessResponse } from "../../base";
 import { ARepository } from "../../base/ARepository";
-import { IResponseModel } from "../../base/IResponse";
 import { ReviewEntry } from "../../shared/models/db/review";
+import { ReviewResponse } from "../../shared/models/response/review";
 
-export class ReviewRepository extends ARepository<ReviewEntry> {
+export class ReviewRepository extends ARepository<ReviewEntry, SuccessResponse<ReviewResponse>> {
+    protected readonly tableName: string = "review";
 
-    ToModel(): IResponseModel {
-        throw new Error("Method not implemented.");
-    }
-    Create(entry: ReviewEntry): ReviewEntry {
-        throw new Error("Method not implemented.");
-    }
-    Update(entry: ReviewEntry): ReviewEntry {
-        throw new Error("Method not implemented.");
-    }
-    Delete(entry: ReviewEntry): ReviewEntry {
-        throw new Error("Method not implemented.");
+    toModel(entry: ReviewEntry): SuccessResponse<ReviewResponse> {
+        return {
+            success: true,
+            data: {
+                id: entry.id,
+                gameId: entry.game_id,
+                userId: entry.user_id,
+                rating: entry.rating,
+                review: entry.review,
+                createdAt: entry.created_at.getTime().toString(),
+            }
+        }
     }
 
 }

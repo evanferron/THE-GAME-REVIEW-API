@@ -1,7 +1,8 @@
 import { Request, Response, NextFunction } from "express";
 import { parseToken } from "../utils/jwt";
-import { ValidationError } from "../";
+import { UnauthorizedError, ValidationError } from "../";
 import { AError } from "../../base/AError";
+import { env } from "process";
 
 /**
  * 
@@ -10,15 +11,19 @@ import { AError } from "../../base/AError";
  * @param next 
  */
 export async function authMiddleware(req: Request, res: Response, next: NextFunction) {
-
     try {
         const token = req.headers.authorization;
 
         if (!token) {
-            throw new ValidationError("Unauthorized: Missing Token");
+            throw new UnauthorizedError("Unauthorized: Missing Token");
         }
-        // TODO: Move secret key to env
-        const secret = "secret_key";
+
+        const secret = env.SECRET_KEY;
+        if (!secret) {
+            console.error("Secret key is not defined in .env file");
+            res.status(500).json({ message: "An unexpected error occurred" });
+            return
+        }
         const tokenData = parseToken(secret, token);
 
         req.body.userId = tokenData.userId;
