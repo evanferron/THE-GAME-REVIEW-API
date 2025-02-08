@@ -1,6 +1,6 @@
 import { Pool } from "pg";
-import { UserRepository } from "../database/repositories/user";
-import { ReviewRepository } from "../database/repositories/review";
+import { UserRepository } from "../../database/repositories/user";
+import { ReviewRepository } from "../../database/repositories/review";
 
 export class Config {
     // ! When you add a new repository, you need to add a getter for it and edit the AController class

@@ -1,4 +1,4 @@
-import { AError } from "../../base/AError";
+import { AError } from "../";
 
 export class NotFoundError extends AError {
     constructor(resource: string) {

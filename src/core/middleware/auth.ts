@@ -1,7 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { parseToken } from "../utils/jwt";
-import { UnauthorizedError, ValidationError } from "../";
-import { AError } from "../../base/AError";
+import { parseToken, UnauthorizedError, AError } from "../";
 import { env } from "process";
 
 /**

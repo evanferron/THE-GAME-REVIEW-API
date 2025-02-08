@@ -1,5 +1,4 @@
-import { Config } from "../../config/config";
-import { AController } from "../../base/AController";
+import { Config, AController } from "../../core";
 import { Request, Response } from "express";
 
 

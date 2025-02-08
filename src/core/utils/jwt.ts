@@ -1,7 +1,7 @@
 import { UUID } from "crypto";
 import jwt, { SignOptions, JwtPayload } from "jsonwebtoken";
 import { StringValue } from "ms";
-import { UnauthorizedError } from "../error/ApiError";
+import { UnauthorizedError } from "../";
 
 
 export function generateToken(secret: string, userId: UUID, isAdmin: boolean = false, expiresIn: string = "2h"): string {

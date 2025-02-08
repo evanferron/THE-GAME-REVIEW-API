@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { SuccessResponseSchema } from "../../../base";
+import { SuccessResponseSchema } from "../../";
 
 // Modèle d'un utilisateur retourné dans la réponse
 export const UserResponseSchema = z.object({

@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { Config } from "../config/config";
+import { Config } from "../core";
 import { createAuthRoutes } from "../modules/auth/routes";
 import { createUserRoutes } from "../modules/user/routes";
 import { createReviewRoutes } from "../modules/review/routes";

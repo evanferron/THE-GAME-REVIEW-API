@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { SuccessResponseSchema } from "../../../base";
+import { SuccessResponseSchema } from "../../";
 
 // Modèle d'une critique
 export const ReviewResponseSchema = z.object({

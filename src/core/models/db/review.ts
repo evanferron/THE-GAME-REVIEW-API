@@ -1,5 +1,5 @@
 import { UUID } from "crypto";
-import { IEntry } from "../../../base";
+import { IEntry } from "../../";
 
 export interface ReviewEntry extends IEntry {
     id: UUID;

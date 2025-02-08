@@ -1,8 +1,4 @@
-import { Pool } from "pg";
-import { SuccessResponse } from "../../base";
-import { ARepository } from "../../base/ARepository";
-import { ReviewEntry } from "../../shared/models/db/review";
-import { ReviewResponse } from "../../shared/models/response/review";
+import { SuccessResponse, ARepository, ReviewEntry, ReviewResponse } from "../../core";
 
 export class ReviewRepository extends ARepository<ReviewEntry, SuccessResponse<ReviewResponse>> {
     protected readonly tableName: string = "review";

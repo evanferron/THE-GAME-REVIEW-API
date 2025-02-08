@@ -1,6 +1,6 @@
-import { Config } from "../config/config";
-import { ReviewRepository } from "../database/repositories/review";
-import { UserRepository } from "../database/repositories/user";
+import { Config } from "../";
+import { ReviewRepository } from "../../database/repositories/review";
+import { UserRepository } from "../../database/repositories/user";
 
 
 export abstract class AController {

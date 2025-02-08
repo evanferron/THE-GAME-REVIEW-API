@@ -1,7 +1,6 @@
 import { Router } from "express";
-import { Config } from "../../config/config";
+import { Config, authMiddleware } from "../../core";
 import { ReviewController } from "./controller";
-import { authMiddleware } from "../../shared/middleware/auth";
 
 export function createReviewRoutes(config: Config): Router {
     const router = Router();

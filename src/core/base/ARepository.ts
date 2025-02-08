@@ -1,6 +1,6 @@
 import { Pool, QueryResult, QueryResultRow } from "pg";
 import { IEntry } from "./IEntry";
-import { SuccessResponse } from ".";
+import { SuccessResponse } from "../";
 
 export abstract class ARepository<MyEntry extends IEntry, ResponseModel extends SuccessResponse<any>> {
     protected readonly pool: Pool;
@@ -109,6 +109,8 @@ export abstract class ARepository<MyEntry extends IEntry, ResponseModel extends 
      * @returns all entries in the database for a table
      */
     public async getAll(): Promise<MyEntry[]> {
+        //todo : add pagination and other param to make this method more generic
+        // check also the query                                     
         const result = await this.query<MyEntry>(`SELECT * FROM ${this.tableName}`);
         return result.rows;
     }

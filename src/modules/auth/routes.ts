@@ -1,8 +1,6 @@
 import { Router } from "express";
-import { Config } from "../../config/config";
+import { Config, validateRequest, CreateUserSchema } from "../../core";
 import { AuthController } from "./controller";
-import { validateRequest } from "../../shared/middleware/validateFormat";
-import { CreateUserSchema } from "../../shared";
 
 export function createAuthRoutes(config: Config): Router {
     const router = Router();

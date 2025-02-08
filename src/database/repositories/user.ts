@@ -1,7 +1,4 @@
-import { SuccessResponse } from "../../base";
-import { ARepository } from "../../base/ARepository";
-import { UserEntry } from "../../shared/models/db/user";
-import { UserResponse } from "../../shared/models/response/user";
+import { SuccessResponse, ARepository, UserEntry, UserResponse } from "../../core";
 
 export class UserRepository extends ARepository<UserEntry, SuccessResponse<UserResponse>> {
     protected readonly tableName: string = "user";
