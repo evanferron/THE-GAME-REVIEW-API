@@ -3,9 +3,6 @@ import { Request, Response } from "express";
 
 
 export class AuthController extends AController {
-    constructor(config: Config) {
-        super(config);
-    }
 
     public login(req: Request, res: Response) {
         // TODO: Implement login    

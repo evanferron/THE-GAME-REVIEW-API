@@ -3,9 +3,6 @@ import { Request, Response } from "express";
 
 
 export class UserController extends AController {
-    constructor(config: Config) {
-        super(config);
-    }
 
     public getAllUsers(req: Request, res: Response) {
         // const users = this.getUserRepository().GetAll();

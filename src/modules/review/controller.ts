@@ -3,9 +3,6 @@ import { Request, Response } from "express";
 
 
 export class ReviewController extends AController {
-    constructor(config: Config) {
-        super(config);
-    }
 
     public getAllReviews(req: Request, res: Response) {
     }

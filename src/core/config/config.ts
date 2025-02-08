@@ -3,12 +3,14 @@ import { UserRepository } from "../../database/repositories/user";
 import { ReviewRepository } from "../../database/repositories/review";
 
 export class Config {
-    // ! When you add a new repository, you need to add a getter for it and edit the AController class
-    public reviewRepository: ReviewRepository;
-    public userRepository: UserRepository;
-    private pool: Pool;
+    private static instance: Config;
 
-    constructor() {
+    private readonly pool: Pool;
+
+    public readonly reviewRepository: ReviewRepository;
+    public readonly userRepository: UserRepository;
+
+    private constructor() {
         this.pool = new Pool({
             host: process.env.DB_HOST,
             port: parseInt(process.env.DB_PORT || '5432'),
@@ -22,13 +24,11 @@ export class Config {
         this.userRepository = new UserRepository(this.pool);
     }
 
-    // Those repository getter allosw to simulates pointers to the repositories
-    public getReviewRepository(): ReviewRepository {
-        return this.reviewRepository;
-    }
-
-    public getUserRepository(): UserRepository {
-        return this.userRepository;
+    public static getInstance(): Config {
+        if (!Config.instance) {
+            Config.instance = new Config();
+        }
+        return Config.instance;
     }
 
     public async testConnection() {

@@ -43,7 +43,7 @@ export abstract class ARepository<MyEntry extends IEntry, ResponseModel> {
      * @param entry Entry to create | the field id will be ignored
      * @returns the created entry
      */
-    public async create(entry: Omit<MyEntry, "id">): Promise<SuccessResponse<ResponseModel>> {
+    public async create(entry: Omit<MyEntry, "id">): Promise<MyEntry> {
         const keys = Object.keys(entry).join(", ");
         const values = Object.values(entry);
         const placeholders = values.map((_, i) => `$${i + 1}`).join(", ");
@@ -53,7 +53,7 @@ export abstract class ARepository<MyEntry extends IEntry, ResponseModel> {
             values
         );
 
-        return this.toModel(result.rows[0]);
+        return result.rows[0];
     }
 
     /**
@@ -85,15 +85,12 @@ export abstract class ARepository<MyEntry extends IEntry, ResponseModel> {
      * @param value value to match
      * @returns all the entries that match the column and value
      */
-    public async findByColumn<T extends keyof MyEntry>(column: T, value: MyEntry[T]): Promise<SuccessResponse<ResponseModel[]>> {
+    public async findByColumn<T extends keyof MyEntry>(column: T, value: MyEntry[T]): Promise<MyEntry[]> {
         const result = await this.query<MyEntry>(
             `SELECT * FROM ${this.tableName} WHERE ${String(column)} = $1`,
             [value]
         );
-        return {
-            success: true,
-            data: result.rows.map(this.toModel).map(r => r.data),
-        };
+        return result.rows
     }
 
     /**
