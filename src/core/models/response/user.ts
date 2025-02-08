@@ -1,24 +1,11 @@
-import { z } from "zod";
-import { SuccessResponseSchema } from "../../";
+import { SuccessResponse } from "../..";
 
-// Modèle d'un utilisateur retourné dans la réponse
-export const UserResponseSchema = z.object({
-    id: z.string().uuid(),
-    pseudo: z.string(),
-    email: z.string().email(),
-    isAdmin: z.boolean(),
-});
+export interface UserResponse {
+    id: string;
+    pseudo: string;
+    email: string;
+    isAdmin: boolean;
+}
 
-// Modèle de réponse contenant un utilisateur
-export const SingleUserResponseSchema = SuccessResponseSchema.extend({
-    data: UserResponseSchema,
-});
-
-// Modèle de réponse contenant une liste d'utilisateurs
-export const MultipleUsersResponseSchema = SuccessResponseSchema.extend({
-    data: z.array(UserResponseSchema),
-});
-
-export type UserResponse = z.infer<typeof UserResponseSchema>;
-export type SingleUserResponse = z.infer<typeof SingleUserResponseSchema>;
-export type MultipleUsersResponse = z.infer<typeof MultipleUsersResponseSchema>;
+export type SingleUserResponse = SuccessResponse<UserResponse>;
+export type MultipleUsersResponse = SuccessResponse<UserResponse[]>;

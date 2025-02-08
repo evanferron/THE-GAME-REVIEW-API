@@ -2,7 +2,7 @@ import { Pool, QueryResult, QueryResultRow } from "pg";
 import { IEntry } from "./IEntry";
 import { SuccessResponse } from "../";
 
-export abstract class ARepository<MyEntry extends IEntry, ResponseModel extends SuccessResponse<any>> {
+export abstract class ARepository<MyEntry extends IEntry, ResponseModel> {
     protected readonly pool: Pool;
     protected abstract readonly tableName: string;
 
@@ -18,7 +18,12 @@ export abstract class ARepository<MyEntry extends IEntry, ResponseModel extends 
      *  
      * @param entry
      */
-    abstract toModel(entry: MyEntry): ResponseModel;
+    protected toModel(entry: MyEntry): SuccessResponse<ResponseModel> {
+        return {
+            success: true,
+            data: entry as unknown as ResponseModel,
+        };
+    }
 
     /**
      * method that will interact directly to the database
@@ -38,7 +43,7 @@ export abstract class ARepository<MyEntry extends IEntry, ResponseModel extends 
      * @param entry Entry to create | the field id will be ignored
      * @returns the created entry
      */
-    public async create(entry: Omit<MyEntry, "id">): Promise<MyEntry> {
+    public async create(entry: Omit<MyEntry, "id">): Promise<SuccessResponse<ResponseModel>> {
         const keys = Object.keys(entry).join(", ");
         const values = Object.values(entry);
         const placeholders = values.map((_, i) => `$${i + 1}`).join(", ");
@@ -48,7 +53,7 @@ export abstract class ARepository<MyEntry extends IEntry, ResponseModel extends 
             values
         );
 
-        return result.rows[0];
+        return this.toModel(result.rows[0]);
     }
 
     /**
@@ -80,12 +85,15 @@ export abstract class ARepository<MyEntry extends IEntry, ResponseModel extends 
      * @param value value to match
      * @returns all the entries that match the column and value
      */
-    public async findByColumn<T extends keyof MyEntry>(column: T, value: MyEntry[T]): Promise<MyEntry[]> {
+    public async findByColumn<T extends keyof MyEntry>(column: T, value: MyEntry[T]): Promise<SuccessResponse<ResponseModel[]>> {
         const result = await this.query<MyEntry>(
             `SELECT * FROM ${this.tableName} WHERE ${String(column)} = $1`,
             [value]
         );
-        return result.rows;
+        return {
+            success: true,
+            data: result.rows.map(this.toModel).map(r => r.data),
+        };
     }
 
     /**
