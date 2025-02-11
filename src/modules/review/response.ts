@@ -1,6 +1,6 @@
-import { SuccessResponse } from "../..";
+import { IResponse, SuccessResponse } from "../../core";
 
-export interface ReviewResponse {
+export interface ReviewResponse extends IResponse {
     id: string;
     gameId: bigint;
     userId: string;

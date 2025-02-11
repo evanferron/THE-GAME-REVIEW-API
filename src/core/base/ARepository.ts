@@ -1,8 +1,7 @@
 import { Pool, QueryResult, QueryResultRow } from "pg";
 import { IEntry } from "./IEntry";
-import { SuccessResponse } from "../";
 
-export abstract class ARepository<MyEntry extends IEntry, ResponseModel> {
+export abstract class ARepository<MyEntry extends IEntry> {
     protected readonly pool: Pool;
     protected abstract readonly tableName: string;
 
@@ -10,20 +9,7 @@ export abstract class ARepository<MyEntry extends IEntry, ResponseModel> {
         this.pool = pool;
     }
 
-    /**
-     * Method that will convert a database entry to a response model
-     * 
-     * This method wil convert an entry to a response model
-     * If you want to convert a list of entries to a response model you can use this method in a map function
-     *  
-     * @param entry
-     */
-    protected toModel(entry: MyEntry): SuccessResponse<ResponseModel> {
-        return {
-            success: true,
-            data: entry as unknown as ResponseModel,
-        };
-    }
+
 
     /**
      * method that will interact directly to the database

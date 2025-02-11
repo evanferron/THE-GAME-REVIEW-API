@@ -21,12 +21,3 @@ export * from "./middleware/validateRequest";
 
 // utils
 export * from "./utils/jwt"
-
-
-// models
-export * from "./models/db/review";
-export * from "./models/db/user";
-export * from "./models/request/user";
-export * from "./models/request/review";
-export * from "./models/response/user";
-export * from "./models/response/review";

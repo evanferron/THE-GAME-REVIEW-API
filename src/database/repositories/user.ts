@@ -1,6 +1,7 @@
-import { SuccessResponse, ARepository, UserEntry, UserResponse } from "../../core";
+import { ARepository } from "../../core";
+import { UserEntry } from "../models/user";
 
-export class UserRepository extends ARepository<UserEntry, SuccessResponse<UserResponse>> {
+export class UserRepository extends ARepository<UserEntry> {
     protected readonly tableName: string = "user";
 
 }

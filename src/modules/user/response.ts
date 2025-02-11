@@ -1,6 +1,6 @@
-import { SuccessResponse } from "../..";
+import { IResponse, SuccessResponse } from "../../core";
 
-export interface UserResponse {
+export interface UserResponse extends IResponse {
     id: string;
     pseudo: string;
     email: string;
