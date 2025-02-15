@@ -25,6 +25,7 @@ export class AuthController extends AController {
             } as UserEntry;
 
             const createdUser = await this.config.userRepository.create(user);
+
             res.status(201).json(getResponse<AuthResponse>({
                 pseudo: createdUser.pseudo,
                 token: generateToken(createdUser.id)
