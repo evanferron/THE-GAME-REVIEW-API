@@ -22,7 +22,7 @@ export async function authMiddleware(req: Request, res: Response, next: NextFunc
             res.status(500).json({ message: "An unexpected error occurred" });
             return
         }
-        const tokenData = parseToken(secret, token);
+        const tokenData = parseToken(token);
 
         req.body.userId = tokenData.userId;
         req.body.isAdmin = tokenData.isAdmin;

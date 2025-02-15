@@ -1,5 +1,5 @@
 import { UUID } from "crypto";
-import { IEntry } from "../../";
+import { IEntry } from "../../core";
 
 export interface UserEntry extends IEntry {
     id: UUID

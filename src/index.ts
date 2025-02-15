@@ -1,18 +1,19 @@
 import express, { Express } from "express";
 import dotenv from "dotenv";
-import { errorHandler } from "./src/shared/middleware/error";
-import { Config } from "./src/config/config";
-import { createAppRoutes } from "./src/routes";
+import { createAppRoutes } from "./routes";
+import { Config, errorHandler } from "./core";
 
 dotenv.config();
 
 const app: Express = express();
 const port = process.env.PORT || 3000;
 
+// Load the configuration
+Config.getInstance();
+
 app.use(express.json());
 
-const config = new Config();
-app.use(createAppRoutes(config));
+app.use("/api", createAppRoutes());
 
 // ! The error handler must be the last middleware
 app.use(errorHandler);

@@ -1,16 +1,15 @@
 import { Router } from "express";
-import { Config } from "../core";
 import { createAuthRoutes } from "../modules/auth/routes";
 import { createUserRoutes } from "../modules/user/routes";
 import { createReviewRoutes } from "../modules/review/routes";
 
 
-export function createAppRoutes(config: Config): Router {
+export function createAppRoutes(): Router {
     const router = Router();
 
-    router.use("/auth", createAuthRoutes(config));
-    router.use("/user", createUserRoutes(config));
-    router.use("/review", createReviewRoutes(config));
+    router.use("/auth", createAuthRoutes());
+    router.use("/user", createUserRoutes());
+    router.use("/review", createReviewRoutes());
 
     return router;
 }
