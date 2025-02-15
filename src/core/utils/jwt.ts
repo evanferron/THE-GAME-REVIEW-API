@@ -1,5 +1,5 @@
 import { UUID } from "crypto";
-import jwt, { SignOptions, JwtPayload } from "jsonwebtoken";
+import jwt, { JwtPayload } from "jsonwebtoken";
 import { StringValue } from "ms";
 import { UnauthorizedError } from "../";
 
