@@ -4,18 +4,18 @@ import { Request, Response } from "express";
 
 export class ReviewController extends AController {
 
-    public getAllReviews(req: Request, res: Response) {
+    public getAllReviews = async (req: Request, res: Response) => {
     }
 
-    public getReviewById(req: Request, res: Response) {
+    public getReviewById = async (req: Request, res: Response) => {
     }
 
-    public createReview(req: Request, res: Response) {
+    public createReview = async (req: Request, res: Response) => {
     }
 
-    public updateReview(req: Request, res: Response) {
+    public updateReview = async (req: Request, res: Response) => {
     }
 
-    public deleteReview(req: Request, res: Response) {
+    public deleteReview = async (req: Request, res: Response) => {
     }
 }
