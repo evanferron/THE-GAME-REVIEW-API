@@ -1,10 +1,11 @@
 import { Router } from "express";
-import { Config, validateRequest, CreateUserSchema } from "../../core";
+import { validateRequest } from "../../core";
 import { AuthController } from "./controller";
+import { CreateUserSchema } from "../user/request";
 
-export function createAuthRoutes(config: Config): Router {
+export function createAuthRoutes(): Router {
     const router = Router();
-    const authController = new AuthController(config);
+    const authController = new AuthController();
 
     router.post("/login", validateRequest(CreateUserSchema), authController.login);
     router.post("/register", authController.register);

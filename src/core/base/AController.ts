@@ -1,4 +1,4 @@
-import { Config, IEntry, IResponse, SuccessResponse } from "../";
+import { Config } from "../";
 
 
 export abstract class AController {

@@ -1,10 +1,10 @@
 import { Router } from "express";
-import { Config, authMiddleware } from "../../core";
+import { authMiddleware } from "../../core";
 import { ReviewController } from "./controller";
 
-export function createReviewRoutes(config: Config): Router {
+export function createReviewRoutes(): Router {
     const router = Router();
-    const reviewController = new ReviewController(config);
+    const reviewController = new ReviewController();
 
     router.post("/", authMiddleware, reviewController.createReview);
     router.get("/", reviewController.getAllReviews);
