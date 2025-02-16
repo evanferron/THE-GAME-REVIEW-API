@@ -19,7 +19,15 @@ export abstract class ARepository<MyEntry extends IEntry> {
      * @returns | QueryResult object
      */
     protected async query<R extends QueryResultRow>(sql: string, params?: any[]): Promise<QueryResult<R>> {
-        return await this.pool.query<R>(sql, params);
+        const connection = await this.pool.connect();
+        try {
+            return await connection.query<R>(sql, params);
+        } catch (error) {
+            console.error(`Database query error: ${sql}`, error);
+            throw error;
+        } finally {
+            connection.release();
+        }
     }
 
 

@@ -10,6 +10,8 @@ const port = process.env.PORT || 3000;
 
 // Load the configuration
 Config.getInstance();
+// Test the connection to the database
+Config.getInstance().testConnection();
 
 app.use(express.json());
 

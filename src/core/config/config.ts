@@ -17,7 +17,12 @@ export class Config {
             user: process.env.DB_USER,
             password: process.env.DB_PASSWORD,
             database: process.env.DB_NAME,
+            idleTimeoutMillis: 30000,
+            connectionTimeoutMillis: 5000,
         })
+        this.pool.on("error", (err) => {
+            console.error("Unexpected database error:", err);
+        });
 
         // TODO : Initialize repositories here
         this.reviewRepository = new ReviewRepository(this.pool);
@@ -33,9 +38,9 @@ export class Config {
 
     public async testConnection() {
         try {
-            const client = await this.pool.connect();
+            const connection = await this.pool.connect();
             console.log("Connected to PostgreSQL database!");
-            client.release();  // Libération de la connexion après l'utilisation
+            connection.release();
         } catch (error) {
             console.error("Error connecting to PostgreSQL:", error);
         }
