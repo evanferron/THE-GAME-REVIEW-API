@@ -8,4 +8,5 @@ export interface ReviewEntry extends IEntry {
     rating: number;
     review: string | null;
     created_at: Date;
+    updated_at: Date;
 }

@@ -1,4 +1,4 @@
-import { AError } from "../";
+import { AError } from "..";
 
 export class NotFoundError extends AError {
     constructor(resource: string) {
@@ -15,5 +15,12 @@ export class ValidationError extends AError {
 export class UnauthorizedError extends AError {
     constructor(message = "Unauthorized") {
         super(message, 401);
+    }
+}
+
+
+export class InternalServerError extends AError {
+    constructor(message = "Internal server error") {
+        super(message, 500);
     }
 }

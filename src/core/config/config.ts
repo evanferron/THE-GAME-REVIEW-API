@@ -12,13 +12,14 @@ export class Config {
 
     private constructor() {
         this.pool = new Pool({
-            host: process.env.DB_HOST,
-            port: parseInt(process.env.DB_PORT || '5432'),
-            user: process.env.DB_USER,
-            password: process.env.DB_PASSWORD,
-            database: process.env.DB_NAME,
+            connectionString: process.env.DB_HOST,
+            // port: parseInt(process.env.DB_PORT || '5432'),
+            // user: process.env.DB_USER,
+            // password: process.env.DB_PASSWORD,
+            // database: process.env.DB_NAME,
             idleTimeoutMillis: 30000,
             connectionTimeoutMillis: 5000,
+            ssl: { rejectUnauthorized: false },
         })
         this.pool.on("error", (err) => {
             console.error("Unexpected database error:", err);

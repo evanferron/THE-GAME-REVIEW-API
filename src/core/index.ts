@@ -10,13 +10,13 @@ export * from "./config/config";
 
 
 //error
-export * from "./error/ApiError";
+export * from "./errors/ApiError";
 
 
 // middleware
-export * from "./middleware/auth";
-export * from "./middleware/error";
-export * from "./middleware/validateRequest";
+export * from "./middlewares/auth";
+export * from "./middlewares/error";
+export * from "./middlewares/validateRequest";
 
 
 // utils

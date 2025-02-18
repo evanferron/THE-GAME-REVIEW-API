@@ -6,5 +6,5 @@ export interface UserEntry extends IEntry {
     pseudo: string;
     email: string;
     password: string;
-    isAdmin: boolean;
+    is_admin: boolean;
 }
