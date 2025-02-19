@@ -2,7 +2,7 @@
 export * from "./base/AController";
 export * from "./base/AError";
 export * from "./base/ARepository";
-export * from "./base/BaseResponse";
+export * from "./base/IResponses";
 export * from "./base/IEntry";
 
 // config
