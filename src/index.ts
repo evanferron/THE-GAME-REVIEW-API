@@ -2,6 +2,7 @@ import express, { Express } from "express";
 import dotenv from "dotenv";
 import { createAppRoutes } from "./routes";
 import { Config, errorHandler } from "./core";
+import { checkOrigin, limiter } from "./core";
 
 dotenv.config();
 
@@ -14,6 +15,11 @@ Config.getInstance();
 Config.getInstance().testConnection();
 
 app.use(express.json());
+
+// check the origin of the request
+app.use(checkOrigin);
+// limit the number of requests by ip
+app.use(limiter)
 
 app.use("/api", createAppRoutes());
 
