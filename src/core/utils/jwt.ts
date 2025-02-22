@@ -23,6 +23,7 @@ export function parseToken(token: string): TokenData {
     }
 }
 
+
 class TokenData {
     userId: UUID;
     isAdmin: boolean;

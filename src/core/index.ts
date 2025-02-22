@@ -4,6 +4,7 @@ export * from "./base/AError";
 export * from "./base/ARepository";
 export * from "./base/IResponses";
 export * from "./base/IEntry";
+export * from "./base/IAuthentificateRequest";
 
 // config
 export * from "./config/config";
@@ -25,3 +26,4 @@ export * from "./middlewares/rateLimit";
 export * from "./utils/jwt"
 export * from "./utils/apiClient"
 export * from "./utils/response"
+export * from "./utils/getUserFromRequest"

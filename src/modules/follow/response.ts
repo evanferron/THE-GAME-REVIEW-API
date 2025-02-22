@@ -1,9 +1,10 @@
+import { UUID } from "crypto";
 import { IResponse, SuccessResponse } from "../../core";
 
-export interface ReviewResponse extends IResponse {
-    followerId: bigint;
-    followedId: bigint;
+export interface FollowResponse extends IResponse {
+    followerId: UUID;
+    followedId: UUID;
 }
 
-export type SingleReviewResponse = SuccessResponse<ReviewResponse>;
-export type MultipleReviewsResponse = SuccessResponse<ReviewResponse[]>;
+export type SingleFollowResponse = SuccessResponse<FollowResponse>;
+export type MultipleFollowsResponse = SuccessResponse<FollowResponse[]>;

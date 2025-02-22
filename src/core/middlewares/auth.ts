@@ -1,5 +1,5 @@
-import { Request, Response, NextFunction } from "express";
-import { parseToken, UnauthorizedError, AError } from "../";
+import { Response, NextFunction } from "express";
+import { parseToken, UnauthorizedError, AError, AuthenticatedRequest } from "../";
 import { env } from "process";
 
 /**
@@ -8,7 +8,7 @@ import { env } from "process";
  * @param res 
  * @param next 
  */
-export async function authMiddleware(req: Request, res: Response, next: NextFunction) {
+export async function authMiddleware(req: AuthenticatedRequest, res: Response, next: NextFunction) {
     try {
         const token = req.headers.authorization;
 
@@ -16,7 +16,7 @@ export async function authMiddleware(req: Request, res: Response, next: NextFunc
             throw new UnauthorizedError("Unauthorized: Missing Token");
         }
 
-        const secret = env.SECRET_KEY;
+        const secret = env.JWT_SECRET;
         if (!secret) {
             console.error("Secret key is not defined in .env file");
             res.status(500).json({ message: "An unexpected error occurred" });
@@ -24,8 +24,11 @@ export async function authMiddleware(req: Request, res: Response, next: NextFunc
         }
         const tokenData = parseToken(token);
 
-        req.body.userId = tokenData.userId;
-        req.body.isAdmin = tokenData.isAdmin;
+        req.user = {
+            userId: tokenData.userId,
+            isAdmin: tokenData.isAdmin
+        };
+
         next();
     } catch (err) {
         if (err instanceof AError) {
