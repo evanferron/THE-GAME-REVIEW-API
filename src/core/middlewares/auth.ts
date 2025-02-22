@@ -16,7 +16,7 @@ export async function authMiddleware(req: Request, res: Response, next: NextFunc
             throw new UnauthorizedError("Unauthorized: Missing Token");
         }
 
-        const secret = env.SECRET_KEY;
+        const secret = env.JWT_SECRET;
         if (!secret) {
             console.error("Secret key is not defined in .env file");
             res.status(500).json({ message: "An unexpected error occurred" });
@@ -26,6 +26,7 @@ export async function authMiddleware(req: Request, res: Response, next: NextFunc
 
         req.body.userId = tokenData.userId;
         req.body.isAdmin = tokenData.isAdmin;
+        
         next();
     } catch (err) {
         if (err instanceof AError) {

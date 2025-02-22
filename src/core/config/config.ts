@@ -1,6 +1,7 @@
 import { Pool } from "pg";
 import { UserRepository } from "../../database/repositories/user";
 import { ReviewRepository } from "../../database/repositories/review";
+import { FollowRepository } from "../../database/repositories/follow";
 
 export class Config {
     private static instance: Config;
@@ -9,6 +10,7 @@ export class Config {
 
     public readonly reviewRepository: ReviewRepository;
     public readonly userRepository: UserRepository;
+    public readonly followRepository: FollowRepository;
 
     private constructor() {
         this.pool = new Pool({
@@ -28,6 +30,7 @@ export class Config {
         // TODO : Initialize repositories here
         this.reviewRepository = new ReviewRepository(this.pool);
         this.userRepository = new UserRepository(this.pool);
+        this.followRepository = new FollowRepository(this.pool);
     }
 
     public static getInstance(): Config {

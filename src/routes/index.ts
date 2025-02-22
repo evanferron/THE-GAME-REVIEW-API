@@ -11,7 +11,7 @@ export function createAppRoutes(): Router {
     router.use("/auth", createAuthRoutes());
     router.use("/user", createUserRoutes());
     router.use("/review", createReviewRoutes());
-    router.use("/review", createFollowRoutes());
+    router.use("/follow", createFollowRoutes());
 
     return router;
 }
