@@ -4,10 +4,10 @@ export class AError extends Error {
 
     constructor(message: string, statusCode: number, isOperational = true) {
         super(message);
-        Object.setPrototypeOf(this, new.target.prototype); // Fix prototype chain
+        Object.setPrototypeOf(this, new.target.prototype);
         this.statusCode = statusCode;
         this.isOperational = isOperational;
 
-        Error.captureStackTrace(this, this.constructor); // Capture the stack trace
+        Error.captureStackTrace(this, this.constructor);
     }
 }

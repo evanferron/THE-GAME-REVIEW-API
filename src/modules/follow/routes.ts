@@ -9,9 +9,9 @@ export function createFollowRoutes(): Router {
     const followController = new FollowController();
 
     router.post("/", authMiddleware, validateRequest(CreateFollowSchema), followController.createFollow);
-    router.get("/", authMiddleware, followController.getFollowerById);
-    router.get("/", authMiddleware, followController.getFollowedById);
+    router.get("/me/followers", authMiddleware, followController.getFollowersById);
+    router.get("/me/following", authMiddleware, followController.getFollowingById);
     router.delete("/", authMiddleware, validateRequest(CreateFollowSchema), followController.deleteFollow);
 
     return router;
-}      
+}

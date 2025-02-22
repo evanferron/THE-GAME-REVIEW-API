@@ -6,17 +6,13 @@ import { FollowEntry } from "../../database/models/follow";
 
 export class FollowController extends AController {
 
-    public getFollowerById = async (req: Request, res: Response, next: NextFunction) => {
+    public getFollowersById = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const user = {
                 follower_id: getUserFromRequest(req).userId,
             } as FollowEntry;
 
             const foundFollowed = await this.config.followRepository.findByColumn("follower_id", user.follower_id);
-
-            if (!foundFollowed || foundFollowed.length === 0) {
-                throw new ValidationError("No follow found");
-            }
 
             const followers: FollowResponse[] = foundFollowed.map(follow => ({
                 followerId: follow.follower_id,
@@ -33,17 +29,13 @@ export class FollowController extends AController {
         }
     }
 
-    public getFollowedById = async (req: Request, res: Response, next: NextFunction) => {
+    public getFollowingById = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const follow = {
                 followed_id: getUserFromRequest(req).userId,
             } as FollowEntry;
 
             const foundFollowed = await this.config.followRepository.findByColumn("followed_id", follow.followed_id);
-
-            if (!foundFollowed || foundFollowed.length === 0) {
-                throw new ValidationError("No follow found");
-            }
 
             const follows: FollowResponse[] = foundFollowed.map(follow => ({
                 followerId: follow.follower_id,
@@ -87,11 +79,14 @@ export class FollowController extends AController {
 
             const deletedData = await this.config.followRepository.unfollow(follow.follower_id, follow.followed_id);
 
+            if (deletedData.length === 0) {
+                throw new ValidationError("No follow found");
+            }
+
             res.status(200).json(getResponse<FollowResponse>({
                 followedId: deletedData[0].followed_id,
                 followerId: deletedData[0].follower_id,
-            }));;
-
+            }));
         } catch (err) {
             next(err);
         }
