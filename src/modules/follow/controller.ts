@@ -1,17 +1,15 @@
-import { AController, ValidationError } from "../../core";
+import { AController, ValidationError, getUserFromRequest, getResponse } from "../../core";
 import { NextFunction, Request, Response } from "express";
-import { getResponse } from "../../core/utils/response";
 import { FollowResponse, MultipleFollowsResponse } from "./response";
 import { FollowEntry } from "../../database/models/follow";
 
 
 export class FollowController extends AController {
 
-    // Avoir la liste des abonnements de l'utilisateur
     public getFollowerById = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const user = {
-                follower_id: req.body.userId,
+                follower_id: getUserFromRequest(req).userId,
             } as FollowEntry;
 
             const foundFollowed = await this.config.followRepository.findByColumn("follower_id", user.follower_id);
@@ -19,14 +17,13 @@ export class FollowController extends AController {
             if (!foundFollowed || foundFollowed.length === 0) {
                 throw new ValidationError("No follow found");
             }
-    
-            // Construire la réponse sous forme de tableau FollowResponse[]
+
             const followers: FollowResponse[] = foundFollowed.map(follow => ({
-                followerId: follow.follower_id, 
+                followerId: follow.follower_id,
                 followedId: follow.followed_id
             }));
 
-            res.status(201).json(getResponse<MultipleFollowsResponse>({ 
+            res.status(201).json(getResponse<MultipleFollowsResponse>({
                 success: true,
                 data: followers
             }));
@@ -36,11 +33,10 @@ export class FollowController extends AController {
         }
     }
 
-    // Avoir la liste des abonnés de l'utilisateur
     public getFollowedById = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const follow = {
-                followed_id: req.body.userId,
+                followed_id: getUserFromRequest(req).userId,
             } as FollowEntry;
 
             const foundFollowed = await this.config.followRepository.findByColumn("followed_id", follow.followed_id);
@@ -48,14 +44,13 @@ export class FollowController extends AController {
             if (!foundFollowed || foundFollowed.length === 0) {
                 throw new ValidationError("No follow found");
             }
-    
-            // Construire la réponse sous forme de tableau FollowResponse[]
+
             const follows: FollowResponse[] = foundFollowed.map(follow => ({
-                followerId: follow.follower_id, 
+                followerId: follow.follower_id,
                 followedId: follow.followed_id
             }));
 
-            res.status(201).json(getResponse<MultipleFollowsResponse>({ 
+            res.status(201).json(getResponse<MultipleFollowsResponse>({
                 success: true,
                 data: follows
             }));
@@ -69,7 +64,7 @@ export class FollowController extends AController {
         try {
             const follow = {
                 followed_id: req.body.followedId,
-                follower_id: req.body.userId
+                follower_id: getUserFromRequest(req).userId,
             } as FollowEntry;
 
             const createdFollow = await this.config.followRepository.create(follow);
@@ -87,15 +82,15 @@ export class FollowController extends AController {
         try {
             const follow = {
                 followed_id: req.body.followedId,
-                follower_id: req.body.userId
+                follower_id: getUserFromRequest(req).userId,
             } as FollowEntry;
 
-            const { followedId, userId } = req.body;
+            const deletedData = await this.config.followRepository.unfollow(follow.follower_id, follow.followed_id);
 
-            const createdFollow = await this.config.followRepository.unfollow(follow.follower_id, follow.followed_id);
-
-            // Réponse réussie
-            res.status(200).json({ success: true, message: "Follow relationship deleted successfully" });
+            res.status(200).json(getResponse<FollowResponse>({
+                followedId: deletedData[0].followed_id,
+                followerId: deletedData[0].follower_id,
+            }));;
 
         } catch (err) {
             next(err);
