@@ -4,9 +4,15 @@ import { StringValue } from "ms";
 import { UnauthorizedError } from "../";
 
 const secret = process.env.JWT_SECRET ? process.env.JWT_SECRET : "secret_key";
+const refreshSecret = process.env.JWT_REFRESH_SECRET ? process.env.JWT_REFRESH_SECRET : "refresh_secret_key";
 
-export function generateToken(userId: UUID, isAdmin: boolean = false, expiresIn: string = "2h"): string {
+export function generateToken(userId: UUID, isAdmin: boolean = false, expiresIn: string = "15m"): string {
     return jwt.sign({ userId, isAdmin }, secret, { expiresIn: expiresIn as StringValue });
+}
+
+export function generateRefreshToken(userId: UUID, expiresIn: string = "7d"): string {
+    return jwt.sign({ userId }, refreshSecret, { expiresIn: expiresIn as StringValue });
+
 }
 
 export function parseToken(token: string): TokenData {
@@ -21,6 +27,22 @@ export function parseToken(token: string): TokenData {
     } catch (error) {
         throw new UnauthorizedError("Invalid token");
     }
+}
+
+export function parseRefreshToken(token: string): TokenData {
+    try {
+        if (token.startsWith("Bearer ")) {
+            token = token.slice(7, token.length).trim();
+        }
+        const decoded = jwt.verify(token, refreshSecret) as JwtPayload;
+        return new TokenData(decoded.userId);
+
+    } catch (error) {
+
+        throw new UnauthorizedError("Invalid refresh token");
+
+    }
+
 }
 
 
