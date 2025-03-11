@@ -1,6 +1,6 @@
 import { AController, ValidationError, getUserFromRequest, getResponse } from "../../core";
 import { NextFunction, Request, Response } from "express";
-import { FollowResponse, MultipleFollowsResponse } from "./response";
+import { FollowerUserResponse, FollowingUserResponse, FollowResponse, MultipleFollowerUserResponse, MultipleFollowingUserResponse } from "./response";
 import { FollowEntry } from "../../database/models/follow";
 
 
@@ -12,14 +12,27 @@ export class FollowController extends AController {
                 follower_id: getUserFromRequest(req).userId,
             } as FollowEntry;
 
-            const foundFollowed = await this.config.followRepository.findByColumn("follower_id", user.follower_id);
+            const foundFollower = await this.config.followRepository.getFollowers(user.follower_id);
 
-            const followers: FollowResponse[] = foundFollowed.map(follow => ({
-                followerId: follow.follower_id,
-                followedId: follow.followed_id
+            if (foundFollower.length === 0) {
+                throw new ValidationError("No follow found");
+            }
+
+            const followers: FollowerUserResponse[] = foundFollower.map(follow => ({
+                followerId: user.follower_id,
+                following: {
+                    id : follow.id,
+                    pseudo: follow.pseudo,
+                    email: follow.email,
+                    isAdmin: follow.is_admin,
+                    createdAt: follow.created_at,
+                    deletedAt: follow.deleted_at,
+                    profilePictureId: follow.profile_picture_id,
+                    bannerId: follow.banner_id,
+                }
             }));
 
-            res.status(201).json(getResponse<MultipleFollowsResponse>({
+            res.status(201).json(getResponse<MultipleFollowerUserResponse>({
                 success: true,
                 data: followers
             }));
@@ -31,20 +44,33 @@ export class FollowController extends AController {
 
     public getFollowingById = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const follow = {
-                followed_id: getUserFromRequest(req).userId,
+            const user = {
+                follower_id: getUserFromRequest(req).userId,
             } as FollowEntry;
 
-            const foundFollowed = await this.config.followRepository.findByColumn("followed_id", follow.followed_id);
+            const foundFollower = await this.config.followRepository.getFollowing(user.follower_id);
 
-            const follows: FollowResponse[] = foundFollowed.map(follow => ({
-                followerId: follow.follower_id,
-                followedId: follow.followed_id
+            if (foundFollower.length === 0) {
+                throw new ValidationError("No follow found");
+            }
+
+            const followers: FollowingUserResponse[] = foundFollower.map(follow => ({
+                followingId: user.follower_id,
+                follower : {
+                    id : follow.id,
+                    pseudo: follow.pseudo,
+                    email: follow.email,
+                    isAdmin: follow.is_admin,
+                    createdAt: follow.created_at,
+                    deletedAt: follow.deleted_at,
+                    profilePictureId: follow.profile_picture_id,
+                    bannerId: follow.banner_id,
+                }
             }));
 
-            res.status(201).json(getResponse<MultipleFollowsResponse>({
+            res.status(201).json(getResponse<MultipleFollowingUserResponse>({
                 success: true,
-                data: follows
+                data: followers
             }));
 
         } catch (err) {
