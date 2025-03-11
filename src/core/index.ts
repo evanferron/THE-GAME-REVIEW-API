@@ -24,6 +24,7 @@ export * from "./middlewares/rateLimit";
 
 // utils
 export * from "./utils/jwt"
-export * from "./utils/apiClient"
 export * from "./utils/response"
 export * from "./utils/getUserFromRequest"
+
+export * from "./services/twitchService"

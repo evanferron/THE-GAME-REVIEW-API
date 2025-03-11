@@ -2,6 +2,7 @@ import { Pool } from "pg";
 import { UserRepository } from "../../database/repositories/user";
 import { ReviewRepository } from "../../database/repositories/review";
 import { FollowRepository } from "../../database/repositories/follow";
+import { TwitchService } from "..";
 
 export class Config {
     private static instance: Config;
@@ -11,6 +12,7 @@ export class Config {
     public readonly reviewRepository: ReviewRepository;
     public readonly userRepository: UserRepository;
     public readonly followRepository: FollowRepository;
+    public readonly twitchService: TwitchService;
 
     private constructor() {
         this.pool = new Pool({
@@ -27,10 +29,11 @@ export class Config {
             console.error("Unexpected database error:", err);
         });
 
-        // TODO : Initialize repositories here
         this.reviewRepository = new ReviewRepository(this.pool);
         this.userRepository = new UserRepository(this.pool);
         this.followRepository = new FollowRepository(this.pool);
+
+        this.twitchService = new TwitchService();
     }
 
     public static getInstance(): Config {
