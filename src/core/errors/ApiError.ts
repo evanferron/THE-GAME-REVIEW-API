@@ -24,3 +24,9 @@ export class InternalServerError extends AError {
         super(message, 500);
     }
 }
+
+export class TwitchError extends AError {
+    constructor(message = "Twitch error") {
+        super(message, 500);
+    }
+}
