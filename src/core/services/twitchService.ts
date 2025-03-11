@@ -1,18 +1,27 @@
-import { ApiClient, TwitchError } from "../";
+import axios, { AxiosInstance } from "axios";
+import { TwitchError } from "../";
 
-const TWITCH_CLIENT_ID = process.env.TWITCH_CLIENT_ID;
-const TWITCH_CLIENT_SECRET = process.env.TWITCH_CLIENT_SECRET;
 const TWITCH_BASE_URL = "https://api.twitch.tv/helix";
 const TWITCH_AUTH_URL = "https://id.twitch.tv/oauth2/token";
 
-let tokenExpiration: number = 0;
 
 
 export class TwitchService {
+    private TWITCH_CLIENT_ID = process.env.TWITCH_CLIENT_ID;
+    private TWITCH_CLIENT_SECRET = process.env.TWITCH_CLIENT_SECRET;
+    private tokenExpiration: number = 0;
     private accessToken: string | null = null;
-    private twitchClient = new ApiClient(TWITCH_BASE_URL);
+    private client: AxiosInstance;
 
-    TwitchService() {
+
+    constructor() {
+        this.client = axios.create({
+            baseURL: TWITCH_BASE_URL,
+            timeout: 5000,
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
         this.getAccessToken();
     }
 
@@ -23,22 +32,24 @@ export class TwitchService {
      */
     private async getAccessToken(): Promise<string> {
         const now = Math.floor(Date.now() / 1000);
-
-        if (this.accessToken && now < tokenExpiration) {
+        if (this.accessToken && now < this.tokenExpiration) {
             return this.accessToken;
         }
 
         try {
-            const authClient = new ApiClient(TWITCH_AUTH_URL);
-            const response = await authClient.post<{ access_token: string; expires_in: number }>("", {
-                client_id: TWITCH_CLIENT_ID,
-                client_secret: TWITCH_CLIENT_SECRET,
+            const params = new URLSearchParams({
+                client_id: this.TWITCH_CLIENT_ID || "",
+                client_secret: this.TWITCH_CLIENT_SECRET || "",
                 grant_type: "client_credentials",
             });
+            const response = await axios.post<{ access_token: string; expires_in: number }>(TWITCH_AUTH_URL, params, {
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                },
+            });
 
-            this.accessToken = response.access_token;
-            tokenExpiration = now + response.expires_in;
-
+            this.accessToken = response.data.access_token;
+            this.tokenExpiration = now + response.data.expires_in;
             return this.accessToken;
         } catch (error) {
             console.error("Erreur lors de la récupération du token Twitch:", error);
@@ -56,14 +67,8 @@ export class TwitchService {
     private async fetchTwitchData<T>(endpoint: string, params: object = {}): Promise<T> {
         try {
             const token = await this.getAccessToken();
-
-            return await this.twitchClient.get<T>(endpoint, {
-                ...params,
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    "Client-ID": TWITCH_CLIENT_ID,
-                },
-            });
+            const response = await this.client.get(endpoint, { params, headers: { Authorization: `Bearer ${token}`, "Client-ID": this.TWITCH_CLIENT_ID } });
+            return response.data;
         } catch (error) {
             console.error(`Erreur lors de l'appel à Twitch (${endpoint}) :`, error);
             throw new TwitchError("Erreur lors de la récupération des données Twitch");
