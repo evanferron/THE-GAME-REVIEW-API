@@ -1,4 +1,4 @@
-import { Config, AController, generateToken, ValidationError } from "../../core";
+import { AController, generateRefreshToken, generateToken, parseRefreshToken, UnauthorizedError, ValidationError } from "../../core";
 import { NextFunction, Request, Response } from "express";
 import { UserEntry } from "../../database/models/user";
 import { getResponse } from "../../core/utils/response";
@@ -18,18 +18,19 @@ export class AuthController extends AController {
             const foundUsers = await this.config.userRepository.findByColumn("email", user.email);
 
             if (foundUsers.length === 0) {
-                throw new ValidationError("Email or password is incorrect");
+                throw new UnauthorizedError("Email or password is incorrect");
             }
 
             const passwordMatch = await bcrypt.compare(user.password, foundUsers[0].password);
 
             if (!passwordMatch) {
-                throw new ValidationError("Email or password is incorrect");
+                throw new UnauthorizedError("Email or password is incorrect");
             }
 
             res.status(201).json(getResponse<AuthResponse>({
                 pseudo: foundUsers[0].pseudo,
-                token: generateToken(foundUsers[0].id)
+                token: generateToken(foundUsers[0].id),
+                refreshToken: generateRefreshToken(foundUsers[0].id, "7d")
             }));
         } catch (err) {
             next(err);
@@ -51,10 +52,32 @@ export class AuthController extends AController {
 
             res.status(201).json(getResponse<AuthResponse>({
                 pseudo: createdUser.pseudo,
-                token: generateToken(createdUser.id)
+                token: generateToken(createdUser.id),
+                refreshToken: generateRefreshToken(createdUser.id)
             }));
         } catch (err) {
             next(err);
         }
+    };
+
+    public refreshToken = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const { refreshToken } = req.body;
+            if (!refreshToken) {
+                throw new ValidationError("Refresh token is required");
+            }
+
+            const tokenData = parseRefreshToken(refreshToken);
+
+            res.status(201).json(getResponse<AuthResponse>({
+                pseudo: tokenData.userId,
+                token: generateToken(tokenData.userId),
+                refreshToken: refreshToken
+            }));
+
+        } catch (err) {
+            next(err);
+        }
+
     };
 } 

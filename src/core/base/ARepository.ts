@@ -108,7 +108,7 @@ export abstract class ARepository<MyEntry extends IEntry> {
      * @returns all entries in the database for a table
      */
     public async getAll(): Promise<MyEntry[]> {
-        //todo : add pagination and other param to make this method more generic
+        //TODO : add pagination and other param to make this method more generic
         // check also the query                                     
         const result = await this.query<MyEntry>(`SELECT * FROM ${this.tableName}`);
         return result.rows;

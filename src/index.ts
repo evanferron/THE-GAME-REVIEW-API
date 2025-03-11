@@ -1,13 +1,12 @@
 import express, { Express } from "express";
 import dotenv from "dotenv";
 import { createAppRoutes } from "./routes";
-import { Config, errorHandler } from "./core";
-import { checkOrigin, limiter } from "./core";
+import { Config, errorHandler, checkOrigin, limiter } from "./core";
 
 dotenv.config();
 
 const app: Express = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT ?? 3000;
 
 // Load the configuration
 Config.getInstance();
