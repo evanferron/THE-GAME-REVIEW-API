@@ -6,8 +6,7 @@ export function createUserRoutes(): Router {
     const router = Router();
     const userController = new UserController();
 
-    router.get("/", userController.getAllUsers);
-    router.get("/:id", userController.getUserById);
+    router.get("/", authMiddleware, userController.getUserById);
     router.put("/", authMiddleware, userController.updateUser);
     router.delete("/", authMiddleware, userController.deleteUser);
 
