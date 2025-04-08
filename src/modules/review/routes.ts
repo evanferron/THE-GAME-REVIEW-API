@@ -8,7 +8,9 @@ export function createReviewRoutes(): Router {
 
     router.post("/", authMiddleware, reviewController.createReview);
     router.get("/", reviewController.getAllReviews);
-    router.get("/:id", reviewController.getReviewById);
+    router.get("/getById", reviewController.getReviewById);
+    router.get("/getByGameId", reviewController.getReviewsByGameId);
+    router.get("/getByUserId", reviewController.getReviewsByUserId);
     router.put("/", authMiddleware, reviewController.updateReview);
     router.delete("/", authMiddleware, reviewController.deleteReview);
 
