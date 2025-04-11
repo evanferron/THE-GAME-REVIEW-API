@@ -7,6 +7,7 @@ export interface ReviewResponse extends IResponse {
     rating: number;
     review: string | null;
     createdAt: string;
+    updatedAt: string;
 }
 
 export type SingleReviewResponse = SuccessResponse<ReviewResponse>;
