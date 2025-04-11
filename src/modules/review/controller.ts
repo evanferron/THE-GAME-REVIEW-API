@@ -1,4 +1,4 @@
-import { Config, AController, ValidationError, getResponse } from "../../core";
+import { Config, getUserFromRequest, AController, ValidationError, getResponse } from "../../core";
 import { NextFunction, Request, Response } from "express";
 import { ReviewEntry } from "../../database/models/review";
 import { MultipleReviewsResponse, ReviewResponse, SingleReviewResponse } from "./response";
@@ -125,9 +125,8 @@ export class ReviewController extends AController {
     public createReview = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const review = {
-                id: req.body.id,
                 game_id: req.body.game_id,
-                user_id: req.body.user_id,
+                user_id: getUserFromRequest(req).userId,
                 rating: req.body.rating,
                 review: req.body.review,
                 created_at: new Date(),
