@@ -2,6 +2,8 @@ import { Pool } from "pg";
 import { UserRepository } from "../../database/repositories/user";
 import { ReviewRepository } from "../../database/repositories/review";
 import { FollowRepository } from "../../database/repositories/follow";
+import { ListRepository } from "../../database/repositories/list";
+import { GameListRepository } from "../../database/repositories/gameList";
 import { TwitchService } from "..";
 
 export class Config {
@@ -12,6 +14,8 @@ export class Config {
     public readonly reviewRepository: ReviewRepository;
     public readonly userRepository: UserRepository;
     public readonly followRepository: FollowRepository;
+    public readonly listRepository: ListRepository;
+    public readonly gameListRepository: GameListRepository;
     public readonly twitchService: TwitchService;
 
     private constructor() {
@@ -32,6 +36,8 @@ export class Config {
         this.reviewRepository = new ReviewRepository(this.pool);
         this.userRepository = new UserRepository(this.pool);
         this.followRepository = new FollowRepository(this.pool);
+        this.listRepository = new ListRepository(this.pool);
+        this.gameListRepository = new GameListRepository(this.pool);
 
         this.twitchService = new TwitchService();
     }
