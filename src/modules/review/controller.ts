@@ -189,7 +189,7 @@ export class ReviewController extends AController {
             const deletedReview = await this.config.reviewRepository.deleteByIds(idsToDelete);
 
             if (deletedReview.length === 0) {
-                throw new ValidationError("No follow found");
+                throw new ValidationError("No Review found");
             }
 
             res.status(200).json(getResponse<ReviewResponse>({
