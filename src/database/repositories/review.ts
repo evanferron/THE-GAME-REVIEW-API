@@ -11,10 +11,10 @@ export class ReviewRepository extends ARepository<ReviewEntry> {
     * @param gameId id to get
     * @returns all entries that are get
     */
-    public async getReviewsByGame (gameId: bigint): Promise<ReviewEntry[]> {
+    public async getReviewsByGame(gameId: bigint): Promise<ReviewEntry[]> {
 
         const result = await this.query<ReviewEntry>(
-            `SELECT * FROM reviews WHERE game_id  = $1;`, 
+            `SELECT * FROM reviews WHERE game_id  = $1;`,
             [gameId]
         );
 
@@ -27,13 +27,29 @@ export class ReviewRepository extends ARepository<ReviewEntry> {
     * @param userId id to get
     * @returns all entries that are get
     */
-     public async getReviewsByUser (userId: UUID): Promise<ReviewEntry[]> {
+    public async getReviewsByUser(userId: UUID): Promise<ReviewEntry[]> {
 
         const result = await this.query<ReviewEntry>(
-            `SELECT * FROM reviews WHERE user_id  = $1;`, 
+            `SELECT * FROM reviews WHERE user_id  = $1;`,
             [userId]
         );
 
         return result.rows;
     }
+
+    /**
+ * Récupère la review d'un jeu pour un utilisateur donné
+ * 
+ * @param userId ID de l'utilisateur
+ * @param gameId ID du jeu
+ * @returns La review correspondante, s’il y en a une
+ */
+    public async findGameReviewByUser(userId: UUID, gameId: number): Promise<ReviewEntry[]> {
+        const result = await this.query<ReviewEntry>(
+            `SELECT * FROM reviews WHERE user_id = $1 AND game_id = $2 LIMIT 1;`,
+            [userId, gameId]
+        );
+        return result.rows;
+    }
+
 }
