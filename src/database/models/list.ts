@@ -7,5 +7,4 @@ export interface ListEntry extends IEntry {
     name: string;
     description: string | null;
     is_private: boolean;
-    created_at: Date;
 }

@@ -3,7 +3,7 @@ import { ARepository } from "../../core";
 import { GameListEntry } from "../models/gameList";
 
 export class GameListRepository extends ARepository<GameListEntry> {
-    protected readonly tableName: string = "gameLists";
+    protected readonly tableName: string = "games_lists";
 
     /**
     * Method that will delete all the entries corresponding to the ids
@@ -30,7 +30,7 @@ export class GameListRepository extends ARepository<GameListEntry> {
     public async GetGamesListsByListId(listId: UUID): Promise<GameListEntry[]> {
 
         const result = await this.query<GameListEntry>(
-            `SELECT * FROM games_lists WHERE list_id = $1 RETURNING * ;`,
+            `SELECT * FROM games_lists WHERE list_id = $1;`,
             [listId]
         );
 

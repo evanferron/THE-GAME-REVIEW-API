@@ -20,8 +20,7 @@ export class ListController extends AController {
                 userId: list.user_id,
                 name: list.name,
                 description: list.description,
-                isPrivate: list.is_private,
-                createdAt: new Date(list.created_at).toISOString(),
+                isPrivate: list.is_private
             }));
 
             res.status(201).json(getResponse<MultipleListsResponse>({
@@ -47,8 +46,7 @@ export class ListController extends AController {
                 userId: list.user_id,
                 name: list.name,
                 description: list.description,
-                isPrivate: list.is_private,
-                createdAt: new Date(list.created_at).toISOString(),
+                isPrivate: list.is_private
            }));
 
            res.status(201).json(getResponse<SingleListResponse>({
@@ -65,7 +63,7 @@ export class ListController extends AController {
         try {
         
             const list = {
-                user_id: req.body.user_id,
+                user_id: getUserFromRequest(req).userId,
             } as ListEntry;
 
             const foundLists = await this.config.listRepository.getListsByUser(list.user_id);
@@ -75,8 +73,7 @@ export class ListController extends AController {
                 userId: list.user_id,
                 name: list.name,
                 description: list.description,
-                isPrivate: list.is_private,
-                createdAt: new Date(list.created_at).toISOString(),
+                isPrivate: list.is_private
             }));
 
             res.status(201).json(getResponse<MultipleListsResponse>({
@@ -95,10 +92,9 @@ export class ListController extends AController {
                 user_id: getUserFromRequest(req).userId,
                 name: req.body.name,
                 description: req.body.description,
-                is_private: req.body.is_private,
-                created_at: new Date(),
+                is_private: req.body.isrivate
             } as ListEntry;
-
+            
             const createdList = await this.config.listRepository.create(list);
 
             res.status(201).json(getResponse<ListResponse>({
@@ -106,8 +102,7 @@ export class ListController extends AController {
                 userId: createdList.user_id,
                 name: createdList.name,
                 description: createdList.description,
-                isPrivate: createdList.is_private,
-                createdAt: new Date(createdList.created_at).toISOString(),
+                isPrivate: createdList.is_private
             }));
         } catch (err) {
             next(err);
@@ -133,8 +128,7 @@ export class ListController extends AController {
                 userId: updatedList.user_id,
                 name: updatedList.name,
                 description: updatedList.description,
-                isPrivate: updatedList.is_private,
-                createdAt: new Date(updatedList.created_at).toISOString(),
+                isPrivate: updatedList.is_private
             }));
         } catch (err) {
             next(err);
@@ -158,8 +152,7 @@ export class ListController extends AController {
                 userId: deletedList[0].user_id,
                 name: deletedList[0].name,
                 description: deletedList[0].description,
-                isPrivate: deletedList[0].is_private,
-                createdAt: new Date(deletedList[0].created_at).toISOString(),
+                isPrivate: deletedList[0].is_private
             }));
        } catch (err) {
             next(err);

@@ -8,8 +8,8 @@ export function createListRoutes(): Router {
 
     router.post("/", authMiddleware, listController.createList);
     router.get("/", authMiddleware, listController.getAllLists);
-    router.get("/getById", authMiddleware, listController.getListById);
-    router.get("/getByUserId", authMiddleware, listController.getListsByUserId);
+    router.get("/get_by_id", authMiddleware, listController.getListById);
+    router.get("/get_by_user_id", authMiddleware, listController.getListsByUserId);
     router.put("/", authMiddleware, listController.updateList);
     router.delete("/", authMiddleware, listController.deleteList);
 

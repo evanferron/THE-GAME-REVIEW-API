@@ -6,7 +6,6 @@ export interface ListResponse extends IResponse {
     name: string;
     description: string | null;
     isPrivate: boolean;
-    createdAt: string;
 }
 
 export type SingleListResponse = SuccessResponse<ListResponse>;
