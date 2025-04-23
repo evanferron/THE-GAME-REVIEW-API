@@ -169,6 +169,19 @@ export class ReviewController extends AController {
         }
     }
 
+    public getMyReviews = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const user_id = getUserFromRequest(req).userId as UUID;
+
+            req.params.id = user_id;
+
+            await this.getReviewsByUserId(req, res, next);
+        } catch (err) {
+            next(err);
+        }
+
+    }
+
     public getReviewsByUserIdAndGameId = async (req: Request, res: Response, next: NextFunction) => {
         try {
             let user_id: UUID;
@@ -218,6 +231,20 @@ export class ReviewController extends AController {
             next(err);
         }
     }
+
+    public getMyReviewForAGame = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const user_id = getUserFromRequest(req).userId as UUID;
+
+            req.params.id = user_id;
+
+            await this.getReviewsByUserIdAndGameId(req, res, next);
+        } catch (err) {
+            next(err);
+        }
+    }
+
+
 
     public createReview = async (req: Request, res: Response, next: NextFunction) => {
         try {
