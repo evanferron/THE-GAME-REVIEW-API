@@ -38,6 +38,22 @@ export class ReviewRepository extends ARepository<ReviewEntry> {
     }
 
     /**
+    * Method that will get all the review corresponding to an user
+    * 
+    * @param userId id to get
+    * @returns all entries that are get
+    */
+    public async getReviewsByUserAndGame(userId: UUID, game_id: number): Promise<ReviewEntry[]> {
+
+        const result = await this.query<ReviewEntry>(
+            `SELECT * FROM reviews WHERE user_id  = $1 AND game_id = $2;`,
+            [userId, game_id]
+        );
+
+        return result.rows;
+    }
+
+    /**
  * Récupère la review d'un jeu pour un utilisateur donné
  * 
  * @param userId ID de l'utilisateur

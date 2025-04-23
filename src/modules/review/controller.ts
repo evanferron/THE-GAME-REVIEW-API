@@ -1,18 +1,30 @@
-import { Config, getUserFromRequest, AController, ValidationError, getResponse } from "../../core";
+import { Config, getUserFromRequest, AController, ValidationError, getResponse, SuccessResponse } from "../../core";
 import { NextFunction, Request, Response } from "express";
 import { ReviewEntry } from "../../database/models/review";
 import { MultipleReviewsResponse, ReviewResponse, SingleReviewResponse } from "./response";
+import { UUID } from "crypto";
 
 
 export class ReviewController extends AController {
 
     public getAllReviews = async (req: Request, res: Response, next: NextFunction) => {
         try {
-           
+
             const foundReviews = await this.config.reviewRepository.getAll();
 
             if (foundReviews.length === 0) {
                 throw new ValidationError("No follow found");
+            }
+
+
+            if (foundReviews.length === 0) {
+                res.status(200).json(
+                    {
+                        success: true,
+                        data: null,
+                        message: "No review found"
+                    } as SuccessResponse<any>
+                )
             }
 
             const reviews: ReviewResponse[] = foundReviews.map(review => ({
@@ -37,12 +49,23 @@ export class ReviewController extends AController {
 
     public getReviewById = async (req: Request, res: Response, next: NextFunction) => {
 
-         try {
+        try {
             const review = {
                 id: req.body.id,
             } as ReviewEntry;
 
             const foundReviews = await this.config.reviewRepository.findByColumn("id", review.id);
+
+
+            if (foundReviews.length === 0) {
+                res.status(200).json(
+                    {
+                        success: true,
+                        data: null,
+                        message: "No review found"
+                    } as SuccessResponse<any>
+                )
+            }
 
             const reviews: ReviewResponse[] = foundReviews.map(review => ({
                 id: review.id,
@@ -61,17 +84,27 @@ export class ReviewController extends AController {
 
         } catch (err) {
             next(err);
-        } 
+        }
     }
 
     public getReviewsByGameId = async (req: Request, res: Response, next: NextFunction) => {
         try {
-           
+
             const review = {
                 game_id: req.body.game_id,
             } as ReviewEntry;
 
             const foundReviews = await this.config.reviewRepository.getReviewsByGame(review.game_id);
+
+            if (foundReviews.length === 0) {
+                res.status(200).json(
+                    {
+                        success: true,
+                        data: null,
+                        message: "No review found"
+                    } as SuccessResponse<any>
+                )
+            }
 
             const reviews: ReviewResponse[] = foundReviews.map(review => ({
                 id: review.id,
@@ -95,12 +128,26 @@ export class ReviewController extends AController {
 
     public getReviewsByUserId = async (req: Request, res: Response, next: NextFunction) => {
         try {
-           
-            const review = {
-                user_id: req.body.user_id,
-            } as ReviewEntry;
+            let user_id: UUID;
 
-            const foundReviews = await this.config.reviewRepository.getReviewsByUser(review.user_id);
+            if (!req.params.id || req.params.id === "") {
+                throw new ValidationError('user_id is required');
+            } else {
+                user_id = req.params.id as UUID
+            }
+
+            const foundReviews = await this.config.reviewRepository.getReviewsByUser(user_id);
+
+
+            if (foundReviews.length === 0) {
+                res.status(200).json(
+                    {
+                        success: true,
+                        data: null,
+                        message: "No review found"
+                    } as SuccessResponse<any>
+                )
+            }
 
             const reviews: ReviewResponse[] = foundReviews.map(review => ({
                 id: review.id,
@@ -115,6 +162,56 @@ export class ReviewController extends AController {
             res.status(201).json(getResponse<MultipleReviewsResponse>({
                 success: true,
                 data: reviews
+            }));
+
+        } catch (err) {
+            next(err);
+        }
+    }
+
+    public getReviewsByUserIdAndGameId = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            let user_id: UUID;
+
+            if (!req.params.user_id || req.params.user_id === "") {
+                throw new ValidationError('user_id is required');
+            } else {
+                user_id = req.params.user_id as UUID
+            }
+
+            let game_id: number;
+
+            if (!req.params.game_id || isNaN(Number(req.params.game_id))) {
+                throw new ValidationError('user_id is required');
+            } else {
+                game_id = Number(req.params.game_id)
+            }
+
+            const foundReviews = await this.config.reviewRepository.getReviewsByUserAndGame(user_id, game_id);
+
+            if (foundReviews.length === 0) {
+                res.status(200).json(
+                    {
+                        success: true,
+                        data: null,
+                        message: "No review found"
+                    } as SuccessResponse<any>
+                )
+            }
+
+            const review: ReviewResponse = {
+                id: foundReviews[0].id,
+                gameId: foundReviews[0].game_id,
+                userId: foundReviews[0].user_id,
+                rating: foundReviews[0].rating,
+                review: foundReviews[0].review,
+                createdAt: new Date(foundReviews[0].created_at).toISOString(),
+                updatedAt: new Date(foundReviews[0].updated_at).toISOString(),
+            };
+
+            res.status(201).json(getResponse<SingleReviewResponse>({
+                success: true,
+                data: review
             }));
 
         } catch (err) {
@@ -178,12 +275,12 @@ export class ReviewController extends AController {
     }
 
     public deleteReview = async (req: Request, res: Response, next: NextFunction) => {
-         try {
+        try {
             const review = {
                 id: req.body.id,
             } as ReviewEntry;
 
-             // Créer un tableau pour delete
+            // Créer un tableau pour delete
             const idsToDelete = [review.id];
 
             const deletedReview = await this.config.reviewRepository.deleteByIds(idsToDelete);
