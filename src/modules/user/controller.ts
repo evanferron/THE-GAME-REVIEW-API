@@ -22,8 +22,8 @@ export class UserController extends AController {
                 isAdmin: user.is_admin,
                 createdAt: user.created_at,
                 deletedAt: user.deleted_at,
-                profilePictureId: user.profile_picture_id,
-                bannerId: user.banner_id,
+                profilePictureId: user.profil_picture_id,
+                bannerId: user.banner_picture_id,
             }));
 
             res.status(201).json(getResponse<SingleUserResponse>({
@@ -48,8 +48,8 @@ export class UserController extends AController {
                 password: req.body.password,
                 is_admin: req.body.isAdmin,
                 created_at: req.body.createdAt,
-                profile_picture_id: req.body.profilePictureId,
-                banner_id: req.body.bannerId,
+                profil_picture_id: req.body.profilePictureId,
+                banner_picture_id: req.body.bannerId,
             } as UserEntry;
 
             const createdUser = await this.config.userRepository.update(user.id, user);
@@ -63,8 +63,8 @@ export class UserController extends AController {
                 isAdmin: createdUser.is_admin,
                 createdAt: createdUser.created_at,
                 deletedAt:createdUser.deleted_at,
-                profilePictureId: createdUser.profile_picture_id,
-                bannerId: createdUser.banner_id,
+                profilePictureId: createdUser.profil_picture_id,
+                bannerId: createdUser.banner_picture_id,
             }));
         } catch (err) {
             next(err);
@@ -92,8 +92,8 @@ export class UserController extends AController {
                 isAdmin: deletedUser[0].is_admin,
                 createdAt: deletedUser[0].created_at,
                 deletedAt: deletedUser[0].deleted_at,
-                profilePictureId: deletedUser[0].profile_picture_id,
-                bannerId: deletedUser[0].banner_id,
+                profilePictureId: deletedUser[0].profil_picture_id,
+                bannerId: deletedUser[0].banner_picture_id,
             }));
         } catch (err) {
             next(err);
