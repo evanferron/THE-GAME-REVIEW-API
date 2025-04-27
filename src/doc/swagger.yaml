@@ -1,0 +1,302 @@
+openapi: 3.0.0
+info:
+  title: THE-GAME-REVIEW-API
+  description: API pour gérer les utilisateurs, les jeux, les critiques, les listes et les suivis.
+  version: 1.0.0
+servers:
+  - url: http://localhost:3000/api
+    description: Serveur local
+
+tags:
+  - name: Auth
+    description: Routes pour l'authentification
+  - name: User
+    description: Routes pour la gestion des utilisateurs
+  - name: Review
+    description: Routes pour la gestion des critiques
+  - name: Game
+    description: Routes pour la gestion des jeux
+  - name: List
+    description: Routes pour la gestion des listes
+  - name: Follow
+    description: Routes pour la gestion des abonnements
+
+paths:
+  # Auth Routes
+  /auth/login:
+    post:
+      tags:
+        - Auth
+      summary: Connexion utilisateur
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginUserRequest'
+      responses:
+        '201':
+          description: Succès de la connexion
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessAuthResponse'
+
+  /auth/register:
+    post:
+      tags:
+        - Auth
+      summary: Inscription utilisateur
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterUserRequest'
+      responses:
+        '201':
+          description: Succès de l'inscription
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessAuthResponse'
+
+  /auth/refresh:
+    post:
+      tags:
+        - Auth
+      summary: Rafraîchir le token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefreshTokenRequest'
+      responses:
+        '201':
+          description: Succès du rafraîchissement
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessAuthResponse'
+
+  # User Routes
+  /user:
+    get:
+      tags:
+        - User
+      summary: Récupérer les informations de l'utilisateur connecté
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Informations de l'utilisateur
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SingleUserResponse'
+    put:
+      tags:
+        - User
+      summary: Mettre à jour les informations de l'utilisateur
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserResponse'
+      responses:
+        '201':
+          description: Succès de la mise à jour
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+    delete:
+      tags:
+        - User
+      summary: Supprimer l'utilisateur connecté
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Succès de la suppression
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+
+  # Review Routes
+  /review:
+    post:
+      tags:
+        - Review
+      summary: Créer une critique
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateReviewRequest'
+      responses:
+        '201':
+          description: Critique créée
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReviewResponse'
+    get:
+      tags:
+        - Review
+      summary: Récupérer toutes les critiques
+      responses:
+        '200':
+          description: Liste des critiques
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MultipleReviewsResponse'
+
+  /review/{id}:
+    get:
+      tags:
+        - Review
+      summary: Récupérer une critique par ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Critique trouvée
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SingleReviewResponse'
+
+  # Game Routes
+  /game/{id}:
+    get:
+      tags:
+        - Game
+      summary: Récupérer les détails d'un jeu
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Détails du jeu
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GameDetailsResponse'
+
+  /game/cards:
+    get:
+      tags:
+        - Game
+      summary: Récupérer les aperçus de plusieurs jeux
+      responses:
+        '200':
+          description: Aperçus des jeux
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GamesPreviewResponse'
+
+  /game/top:
+    get:
+      tags:
+        - Game
+      summary: Récupérer les jeux les plus populaires
+      responses:
+        '200':
+          description: Liste des jeux populaires
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GamesPreviewResponse'
+
+  # List Routes
+  /list:
+    post:
+      tags:
+        - List
+      summary: Créer une liste
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateListRequest'
+      responses:
+        '201':
+          description: Liste créée
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SingleListResponse'
+    get:
+      tags:
+        - List
+      summary: Récupérer toutes les listes de l'utilisateur connecté
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Listes récupérées
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MultipleListsResponse'
+
+  # Follow Routes
+  /follow/me/followers:
+    get:
+      tags:
+        - Follow
+      summary: Récupérer les abonnés de l'utilisateur connecté
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Liste des abonnés
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MultipleFollowerUserResponse'
+
+  /follow/me/following:
+    get:
+      tags:
+        - Follow
+      summary: Récupérer les utilisateurs suivis par l'utilisateur connecté
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Liste des utilisateurs suivis
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MultipleFollowingUserResponse'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  # Schémas (inchangés, voir version précédente)

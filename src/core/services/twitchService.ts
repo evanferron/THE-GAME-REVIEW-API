@@ -2,6 +2,7 @@ import axios, { AxiosInstance } from "axios";
 import { TwitchError } from "../";
 
 const IGDB_BASE_URL = "https://api.igdb.com/v4";
+const TWITCH_BASE_URL = "https://api.twitch.tv/helix";
 const TWITCH_AUTH_URL = "https://id.twitch.tv/oauth2/token";
 
 export class TwitchService {
@@ -9,11 +10,16 @@ export class TwitchService {
     private TWITCH_CLIENT_SECRET = process.env.TWITCH_CLIENT_SECRET;
     private tokenExpiration: number = 0;
     private accessToken: string | null = null;
-    private client: AxiosInstance;
+    private igbdClient: AxiosInstance;
+    private twitchClient: AxiosInstance;
 
     constructor() {
-        this.client = axios.create({
+        this.igbdClient = axios.create({
             baseURL: IGDB_BASE_URL,
+            timeout: 5000,
+        });
+        this.twitchClient = axios.create({
+            baseURL: TWITCH_BASE_URL,
             timeout: 5000,
         });
         this.getAccessToken();
@@ -54,7 +60,24 @@ export class TwitchService {
     private async fetchIGDBData<T>(endpoint: string, query: string): Promise<T> {
         try {
             const token = await this.getAccessToken();
-            const response = await this.client.post<T>(endpoint, query, {
+            const response = await this.igbdClient.post<T>(endpoint, query, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Client-ID": this.TWITCH_CLIENT_ID || "",
+                    "Content-Type": "text/plain"
+                },
+            });
+            return response.data;
+        } catch (error) {
+            console.error(`Erreur lors de l'appel à IGDB (${endpoint}) :`, error);
+            throw new TwitchError("Erreur lors de la récupération des données IGDB");
+        }
+    }
+
+    private async fetchTwitchData<T>(endpoint: string, params = ""): Promise<T> {
+        try {
+            const token = await this.getAccessToken();
+            const response = await this.twitchClient.get<T>(endpoint + params, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                     "Client-ID": this.TWITCH_CLIENT_ID || "",
@@ -117,15 +140,15 @@ export class TwitchService {
     public async getTopGames(limit: number = 10) {
         try {
             const query = `
-            fields id, name, cover.url, aggregated_rating;
-            sort aggregated_rating desc;
+            fields id, name, cover.url, total_rating_count	;
+            sort total_rating_count	 desc;
             limit ${limit};
         `;
             const games = await this.fetchIGDBData<{
                 id: number;
                 name: string;
                 cover: { url: string };
-                aggregated_rating: number;
+                total_rating_count: number;
             }[]>("/games", query);
 
             return games;
