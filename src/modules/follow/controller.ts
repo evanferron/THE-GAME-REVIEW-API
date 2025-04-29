@@ -27,8 +27,8 @@ export class FollowController extends AController {
                     isAdmin: follow.is_admin,
                     createdAt: follow.created_at,
                     deletedAt: follow.deleted_at,
-                    profilePictureId: follow.profile_picture_id,
-                    bannerId: follow.banner_id,
+                    profilePictureId: follow.profil_picture_id,
+                    bannerId: follow.banner_picture_id,
                 }
             }));
 
@@ -63,8 +63,8 @@ export class FollowController extends AController {
                     isAdmin: follow.is_admin,
                     createdAt: follow.created_at,
                     deletedAt: follow.deleted_at,
-                    profilePictureId: follow.profile_picture_id,
-                    bannerId: follow.banner_id,
+                    profilePictureId: follow.profil_picture_id,
+                    bannerId: follow.banner_picture_id,
                 }
             }));
 

@@ -9,6 +9,6 @@ export interface UserEntry extends IEntry {
     is_admin: boolean;
     created_at: string;
     deleted_at:string;
-    profile_picture_id: number;
-    banner_id: number;
+    profil_picture_id: number;
+    banner_picture_id: number;
 }

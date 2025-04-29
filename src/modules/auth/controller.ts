@@ -4,6 +4,7 @@ import { UserEntry } from "../../database/models/user";
 import { getResponse } from "../../core/utils/response";
 import { AuthResponse } from "./response";
 import bcrypt from "bcrypt";
+import { randomInt } from "crypto";
 
 
 export class AuthController extends AController {
@@ -47,6 +48,10 @@ export class AuthController extends AController {
                 password: hashedPassword,
                 is_admin: false
             } as UserEntry;
+
+            //choix aléatoire d'une image de profil et d'une bannière
+            user.banner_picture_id = randomInt(1, 5);
+            user.profil_picture_id = randomInt(1, 5);
 
             const createdUser = await this.config.userRepository.create(user);
 
