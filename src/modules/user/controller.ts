@@ -10,7 +10,7 @@ export class UserController extends AController {
 
         try {
             const user = {
-                id: req.body.userId,
+                id: getUserFromRequest(req).userId,
             } as UserEntry;
 
             const foundUser = await this.config.userRepository.findByColumn("id", user.id);
@@ -26,7 +26,7 @@ export class UserController extends AController {
                 bannerId: user.banner_picture_id,
             }));
 
-            res.status(201).json(getResponse<SingleUserResponse>({
+            res.status(200).json(getResponse<SingleUserResponse>({
                 success: true,
                 data: users[0]
             }));
