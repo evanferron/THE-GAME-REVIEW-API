@@ -1,6 +1,7 @@
 import { Config, AController, getResponse, getUserFromRequest, ValidationError } from "../../core";
 import { NextFunction, Request, Response } from "express";
 import { UserEntry } from "../../database/models/user";
+import bcrypt from "bcrypt";
 import { SingleUserResponse, UserResponse } from "../user/response";
 
 
@@ -37,13 +38,11 @@ export class UserController extends AController {
     }
 
     public updateUser = async (req: Request, res: Response, next: NextFunction) => {
-        // ! check if user is authorized to update
-        // const user = this.getUserRepository().Update(req.body);
          
         try {
             const user = {
                 id: getUserFromRequest(req).userId,
-                pseudo: req.body.id,
+                pseudo: req.body.pseudo,
                 email: req.body.email,
                 password: req.body.password,
                 is_admin: req.body.isAdmin,
@@ -66,6 +65,66 @@ export class UserController extends AController {
                 profilePictureId: createdUser.profil_picture_id,
                 bannerId: createdUser.banner_picture_id,
             }));
+        } catch (err) {
+            next(err);
+        }
+        
+    }
+
+    public updateUserInfo = async (req: Request, res: Response, next: NextFunction) => {
+         
+        try {
+            const user = {
+                id: getUserFromRequest(req).userId,
+                pseudo: req.body.pseudo,
+                email: req.body.email,
+            } as UserEntry;
+
+            const createdUser = await this.config.userRepository.update(user.id, user);
+            if (createdUser == null) {
+                throw new ValidationError("No User found");
+            }
+            res.status(201).json(getResponse<UserResponse>({
+                id: createdUser.id,
+                pseudo: createdUser.pseudo,
+                email: createdUser.email,
+                isAdmin: createdUser.is_admin,
+                createdAt: createdUser.created_at,
+                deletedAt:createdUser.deleted_at,
+                profilePictureId: createdUser.profil_picture_id,
+                bannerId: createdUser.banner_picture_id,
+            }));
+        } catch (err) {
+            next(err);
+        }
+        
+    }
+
+    public updateUserPassword = async (req: Request, res: Response, next: NextFunction) => {
+         
+        try {
+            const hashedPassword = await bcrypt.hash(req.body.password, 10);
+
+            const user = {
+                id: getUserFromRequest(req).userId,
+                password: hashedPassword,
+            } as UserEntry;
+
+            const createdUser = await this.config.userRepository.update(user.id, user);
+            if (createdUser == null) {
+                throw new ValidationError("No User found");
+            }
+            res.status(201).json(getResponse<UserResponse>({
+                id: createdUser.id,
+                pseudo: createdUser.pseudo,
+                email: createdUser.email,
+                isAdmin: createdUser.is_admin,
+                createdAt: createdUser.created_at,
+                deletedAt:createdUser.deleted_at,
+                profilePictureId: createdUser.profil_picture_id,
+                bannerId: createdUser.banner_picture_id,
+            }));
+            console.log("User password updated");
         } catch (err) {
             next(err);
         }
