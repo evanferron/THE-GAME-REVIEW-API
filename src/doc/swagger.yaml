@@ -95,6 +95,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SingleUserResponse'
+  /user:
     put:
       tags:
         - User
@@ -114,6 +115,47 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/UserResponse'
+  /user/info:
+    put:
+      tags:
+        - User
+      summary: Mettre à jour les informations pseudo et email de l'utilisateur
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserResponse'
+      responses:
+        '201':
+          description: Succès de la mise à jour
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+  /user/password:
+    put:
+      tags:
+        - User
+      summary: Mettre à jour les informations password de l'utilisateur
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserResponse'
+      responses:
+        '201':
+          description: Succès de la mise à jour
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+  /user:
     delete:
       tags:
         - User
