@@ -60,11 +60,14 @@ export class ReviewRepository extends ARepository<ReviewEntry> {
  * @param gameId ID du jeu
  * @returns La review correspondante, s’il y en a une
  */
-    public async findGameReviewByUser(userId: UUID, gameId: number): Promise<ReviewEntry[]> {
+    public async findGameReviewByUser(userId: UUID, gameId: number): Promise<ReviewEntry[] | null> {
         const result = await this.query<ReviewEntry>(
             `SELECT * FROM reviews WHERE user_id = $1 AND game_id = $2 LIMIT 1;`,
             [userId, gameId]
         );
+        if (result.rowCount === 0) {
+            return null;
+        }
         return result.rows;
     }
 

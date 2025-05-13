@@ -6,12 +6,12 @@ const TWITCH_BASE_URL = "https://api.twitch.tv/helix";
 const TWITCH_AUTH_URL = "https://id.twitch.tv/oauth2/token";
 
 export class TwitchService {
-    private TWITCH_CLIENT_ID = process.env.TWITCH_CLIENT_ID;
-    private TWITCH_CLIENT_SECRET = process.env.TWITCH_CLIENT_SECRET;
+    private readonly TWITCH_CLIENT_ID = process.env.TWITCH_CLIENT_ID;
+    private readonly TWITCH_CLIENT_SECRET = process.env.TWITCH_CLIENT_SECRET;
     private tokenExpiration: number = 0;
     private accessToken: string | null = null;
-    private igbdClient: AxiosInstance;
-    private twitchClient: AxiosInstance;
+    private readonly igbdClient: AxiosInstance;
+    private readonly twitchClient: AxiosInstance;
 
     constructor() {
         this.igbdClient = axios.create({
@@ -33,8 +33,8 @@ export class TwitchService {
 
         try {
             const params = new URLSearchParams({
-                client_id: this.TWITCH_CLIENT_ID || "",
-                client_secret: this.TWITCH_CLIENT_SECRET || "",
+                client_id: this.TWITCH_CLIENT_ID ?? "",
+                client_secret: this.TWITCH_CLIENT_SECRET ?? "",
                 grant_type: "client_credentials",
             });
 
@@ -63,7 +63,7 @@ export class TwitchService {
             const response = await this.igbdClient.post<T>(endpoint, query, {
                 headers: {
                     Authorization: `Bearer ${token}`,
-                    "Client-ID": this.TWITCH_CLIENT_ID || "",
+                    "Client-ID": this.TWITCH_CLIENT_ID ?? "",
                     "Content-Type": "text/plain"
                 },
             });
@@ -80,7 +80,7 @@ export class TwitchService {
             const response = await this.twitchClient.get<T>(endpoint + params, {
                 headers: {
                     Authorization: `Bearer ${token}`,
-                    "Client-ID": this.TWITCH_CLIENT_ID || "",
+                    "Client-ID": this.TWITCH_CLIENT_ID ?? "",
                     "Content-Type": "text/plain"
                 },
             });
@@ -105,6 +105,11 @@ export class TwitchService {
             if (!games || games.length === 0) {
                 throw new Error("Aucun jeu trouvé avec ce nom ou ID.");
             }
+            for (const game of games) {
+                if (game.cover?.url) {
+                    game.cover.url = game.cover.url.replace('t_thumb', 't_cover_big');
+                }
+            }
             return games[0];
         } catch (error) {
             console.error("Erreur lors de la récupération des informations du jeu IGDB :", error);
@@ -123,6 +128,12 @@ export class TwitchService {
                 "/games",
                 query
             );
+
+            for (const game of games) {
+                if (game.cover?.url) {
+                    game.cover.url = game.cover.url.replace('t_thumb', 't_cover_big');
+                }
+            }
 
             return games;
         } catch (error) {
@@ -151,6 +162,11 @@ export class TwitchService {
                 total_rating_count: number;
             }[]>("/games", query);
 
+            for (const game of games) {
+                if (game.cover?.url) {
+                    game.cover.url = game.cover.url.replace('t_thumb', 't_cover_big');
+                }
+            }
             return games;
         } catch (error) {
             console.error("Erreur lors de la récupération des jeux populaires IGDB :", error);
@@ -197,6 +213,11 @@ export class TwitchService {
                 aggregated_rating: number;
             }[]>("/games", query);
 
+            for (const game of games) {
+                if (game.cover?.url) {
+                    game.cover.url = game.cover.url.replace('t_thumb', 't_cover_big');
+                }
+            }
             return games;
         } catch (error) {
             console.error("Erreur lors de la récupération des aperçus de jeux IGDB :", error);

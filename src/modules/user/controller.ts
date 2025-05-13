@@ -6,7 +6,7 @@ import { SingleUserResponse, UserResponse } from "../user/response";
 
 
 export class UserController extends AController {
-  
+
     public getUserById = async (req: Request, res: Response, next: NextFunction) => {
 
         try {
@@ -34,11 +34,11 @@ export class UserController extends AController {
 
         } catch (err) {
             next(err);
-        }    
+        }
     }
 
     public updateUser = async (req: Request, res: Response, next: NextFunction) => {
-         
+
         try {
             const user = {
                 id: getUserFromRequest(req).userId,
@@ -61,18 +61,18 @@ export class UserController extends AController {
                 email: createdUser.email,
                 isAdmin: createdUser.is_admin,
                 createdAt: createdUser.created_at,
-                deletedAt:createdUser.deleted_at,
+                deletedAt: createdUser.deleted_at,
                 profilePictureId: createdUser.profil_picture_id,
                 bannerId: createdUser.banner_picture_id,
             }));
         } catch (err) {
             next(err);
         }
-        
+
     }
 
     public updateUserInfo = async (req: Request, res: Response, next: NextFunction) => {
-         
+
         try {
             const user = {
                 id: getUserFromRequest(req).userId,
@@ -90,18 +90,18 @@ export class UserController extends AController {
                 email: createdUser.email,
                 isAdmin: createdUser.is_admin,
                 createdAt: createdUser.created_at,
-                deletedAt:createdUser.deleted_at,
+                deletedAt: createdUser.deleted_at,
                 profilePictureId: createdUser.profil_picture_id,
                 bannerId: createdUser.banner_picture_id,
             }));
         } catch (err) {
             next(err);
         }
-        
+
     }
 
     public updateUserPassword = async (req: Request, res: Response, next: NextFunction) => {
-         
+
         try {
             const hashedPassword = await bcrypt.hash(req.body.password, 10);
 
@@ -120,7 +120,7 @@ export class UserController extends AController {
                 email: createdUser.email,
                 isAdmin: createdUser.is_admin,
                 createdAt: createdUser.created_at,
-                deletedAt:createdUser.deleted_at,
+                deletedAt: createdUser.deleted_at,
                 profilePictureId: createdUser.profil_picture_id,
                 bannerId: createdUser.banner_picture_id,
             }));
@@ -128,7 +128,7 @@ export class UserController extends AController {
         } catch (err) {
             next(err);
         }
-        
+
     }
 
     public deleteUser = async (req: Request, res: Response, next: NextFunction) => {
