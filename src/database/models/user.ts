@@ -7,8 +7,8 @@ export interface UserEntry extends IEntry {
     email: string;
     password: string;
     is_admin: boolean;
-    created_at: string;
-    deleted_at:string;
+    created_at: Date;
+    deleted_at: Date;
     profil_picture_id: number;
     banner_picture_id: number;
 }

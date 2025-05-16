@@ -28,6 +28,10 @@ export class AuthController extends AController {
                 throw new UnauthorizedError("Email or password is incorrect");
             }
 
+            if (foundUsers[0].deleted_at != null) {
+                throw new UnauthorizedError("User is deleted");
+            }
+
             res.status(201).json(getResponse<AuthResponse>({
                 pseudo: foundUsers[0].pseudo,
                 token: generateToken(foundUsers[0].id),

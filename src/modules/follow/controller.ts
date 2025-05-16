@@ -25,8 +25,8 @@ export class FollowController extends AController {
                     pseudo: follow.pseudo,
                     email: follow.email,
                     isAdmin: follow.is_admin,
-                    createdAt: follow.created_at,
-                    deletedAt: follow.deleted_at,
+                    createdAt: new Date(follow.created_at).toISOString(),
+                    deletedAt:new Date(follow.deleted_at).toISOString(),
                     profilePictureId: follow.profil_picture_id,
                     bannerId: follow.banner_picture_id,
                 }
@@ -61,8 +61,8 @@ export class FollowController extends AController {
                     pseudo: follow.pseudo,
                     email: follow.email,
                     isAdmin: follow.is_admin,
-                    createdAt: follow.created_at,
-                    deletedAt: follow.deleted_at,
+                    createdAt: new Date(follow.created_at).toISOString(),
+                    deletedAt:new Date(follow.deleted_at).toISOString(),
                     profilePictureId: follow.profil_picture_id,
                     bannerId: follow.banner_picture_id,
                 }

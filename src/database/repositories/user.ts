@@ -11,11 +11,11 @@ export class UserRepository extends ARepository<UserEntry> {
     * @param id id to delete
     * @returns entrie that are deleted
     */
-    public async deleteUser(userId: UUID): Promise<UserEntry[]> {
+    public async deleteUser(userId: UUID, userDeletedAt : Date): Promise<UserEntry[]> {
 
         const result = await this.query<UserEntry>(
-            `UPDATE user SET deleted_at = NOW() WHERE id = $1;`,
-            [userId]
+            `UPDATE users SET deleted_at = $1 WHERE id = $2 RETURNING * ;`,
+            [userDeletedAt, userId]
         );
 
         return result.rows;

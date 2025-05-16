@@ -1,4 +1,4 @@
-import { Config, AController, getResponse, getUserFromRequest, ValidationError } from "../../core";
+import { AController, getResponse, getUserFromRequest, ValidationError } from "../../core";
 import { NextFunction, Request, Response } from "express";
 import { UserEntry } from "../../database/models/user";
 import bcrypt from "bcrypt";
@@ -21,8 +21,8 @@ export class UserController extends AController {
                 pseudo: user.pseudo,
                 email: user.email,
                 isAdmin: user.is_admin,
-                createdAt: user.created_at,
-                deletedAt: user.deleted_at,
+                createdAt: new Date(user.created_at).toISOString(),
+                deletedAt: new Date(user.deleted_at).toISOString(),
                 profilePictureId: user.profil_picture_id,
                 bannerId: user.banner_picture_id,
             }));
@@ -60,8 +60,8 @@ export class UserController extends AController {
                 pseudo: createdUser.pseudo,
                 email: createdUser.email,
                 isAdmin: createdUser.is_admin,
-                createdAt: createdUser.created_at,
-                deletedAt: createdUser.deleted_at,
+                createdAt: new Date(createdUser.created_at).toISOString(),
+                deletedAt: new Date(createdUser.deleted_at).toISOString(),
                 profilePictureId: createdUser.profil_picture_id,
                 bannerId: createdUser.banner_picture_id,
             }));
@@ -89,8 +89,8 @@ export class UserController extends AController {
                 pseudo: createdUser.pseudo,
                 email: createdUser.email,
                 isAdmin: createdUser.is_admin,
-                createdAt: createdUser.created_at,
-                deletedAt: createdUser.deleted_at,
+                createdAt: new Date(createdUser.created_at).toISOString(),
+                deletedAt: new Date(createdUser.deleted_at).toISOString(),
                 profilePictureId: createdUser.profil_picture_id,
                 bannerId: createdUser.banner_picture_id,
             }));
@@ -119,8 +119,8 @@ export class UserController extends AController {
                 pseudo: createdUser.pseudo,
                 email: createdUser.email,
                 isAdmin: createdUser.is_admin,
-                createdAt: createdUser.created_at,
-                deletedAt: createdUser.deleted_at,
+                createdAt: new Date(createdUser.created_at).toISOString(),
+                deletedAt: new Date(createdUser.deleted_at).toISOString(),
                 profilePictureId: createdUser.profil_picture_id,
                 bannerId: createdUser.banner_picture_id,
             }));
@@ -132,29 +132,32 @@ export class UserController extends AController {
     }
 
     public deleteUser = async (req: Request, res: Response, next: NextFunction) => {
-        // ! check if user is authorized to update
+
         try {
+            console.log("User deleting");
             const user = {
                 id: getUserFromRequest(req).userId,
+                deleted_at: new Date()
             } as UserEntry;
-
-            const deletedUser = await this.config.userRepository.deleteUser(user.id);
-
+            console.log("1");
+            const deletedUser = await this.config.userRepository.deleteUser(user.id, user.deleted_at);
+            console.log("1.5", deletedUser);
             if (deletedUser.length === 0) {
                 throw new ValidationError("No User found");
             }
-
+            console.log("User deleted");
             res.status(200).json(getResponse<UserResponse>({
                 id: deletedUser[0].id,
                 pseudo: deletedUser[0].pseudo,
                 email: deletedUser[0].email,
                 isAdmin: deletedUser[0].is_admin,
-                createdAt: deletedUser[0].created_at,
-                deletedAt: deletedUser[0].deleted_at,
+                createdAt: new Date(deletedUser[0].created_at).toISOString(),
+                deletedAt: new Date(deletedUser[0].deleted_at).toISOString(),
                 profilePictureId: deletedUser[0].profil_picture_id,
                 bannerId: deletedUser[0].banner_picture_id,
             }));
         } catch (err) {
+            console.log("2");
             next(err);
         }
     }
