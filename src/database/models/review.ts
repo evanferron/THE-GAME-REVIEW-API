@@ -10,3 +10,7 @@ export interface ReviewEntry extends IEntry {
     created_at: Date;
     updated_at: Date;
 }
+
+export interface ReviewData extends ReviewEntry {
+    likes: number;
+}
