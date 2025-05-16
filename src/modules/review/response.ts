@@ -6,6 +6,7 @@ export interface ReviewResponse extends IResponse {
     userId: string;
     rating: number;
     review: string | null;
+    likes: number;
     createdAt: string;
     updatedAt: string;
 }

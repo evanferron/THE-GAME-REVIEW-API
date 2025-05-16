@@ -8,6 +8,8 @@ export function createReviewRoutes(): Router {
 
     router.post("/", authMiddleware, reviewController.createReview);
     router.get("/", reviewController.getAllReviews);
+    router.get("/top", reviewController.getReviewsByPopularity);
+
     router.get("/:id", reviewController.getReviewById);
     router.get("/get_by_game_id", reviewController.getReviewsByGameId);
     router.get("/get_by_user_id/:id", reviewController.getReviewsByUserId);

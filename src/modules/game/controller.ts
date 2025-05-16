@@ -36,7 +36,7 @@ export class GameController extends AController {
             if (token) {
                 const tokenData = parseToken(token);
                 const review = await this.config.reviewRepository.findGameReviewByUser(tokenData.userId, gameId);
-                response.userRate = review ? review[0].rating : undefined;
+                response.userRate = review ? review.rating : undefined;
                 res.status(200).json(getResponse<GameDetailsResponse>(response));
             } else {
                 res.status(200).json(getResponse<GameDetailsResponse>(response));

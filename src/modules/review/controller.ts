@@ -1,4 +1,4 @@
-import { Config, getUserFromRequest, AController, ValidationError, getResponse, SuccessResponse } from "../../core";
+import { getUserFromRequest, AController, ValidationError, getResponse, SuccessResponse } from "../../core";
 import { NextFunction, Request, Response } from "express";
 import { ReviewEntry } from "../../database/models/review";
 import { MultipleReviewsResponse, ReviewResponse, SingleReviewResponse } from "./response";
@@ -10,7 +10,7 @@ export class ReviewController extends AController {
     public getAllReviews = async (req: Request, res: Response, next: NextFunction) => {
         try {
 
-            const foundReviews = await this.config.reviewRepository.getAll();
+            const foundReviews = await this.config.reviewRepository.getAllReview();
 
             if (foundReviews.length === 0) {
                 throw new ValidationError("No follow found");
@@ -33,6 +33,7 @@ export class ReviewController extends AController {
                 userId: review.user_id,
                 rating: review.rating,
                 review: review.review,
+                likes: review.likes,
                 createdAt: new Date(review.created_at).toISOString(),
                 updatedAt: new Date(review.updated_at).toISOString(),
             }));
@@ -54,7 +55,7 @@ export class ReviewController extends AController {
                 id: req.body.id,
             } as ReviewEntry;
 
-            const foundReviews = await this.config.reviewRepository.findByColumn("id", review.id);
+            const foundReviews = await this.config.reviewRepository.getReviewsById(review.id);
 
 
             if (foundReviews.length === 0) {
@@ -73,6 +74,7 @@ export class ReviewController extends AController {
                 userId: review.user_id,
                 rating: review.rating,
                 review: review.review,
+                likes: review.likes,
                 createdAt: new Date(review.created_at).toISOString(),
                 updatedAt: new Date(review.updated_at).toISOString(),
             }));
@@ -112,6 +114,7 @@ export class ReviewController extends AController {
                 userId: review.user_id,
                 rating: review.rating,
                 review: review.review,
+                likes: review.likes,
                 createdAt: new Date(review.created_at).toISOString(),
                 updatedAt: new Date(review.updated_at).toISOString(),
             }));
@@ -155,6 +158,45 @@ export class ReviewController extends AController {
                 userId: review.user_id,
                 rating: review.rating,
                 review: review.review,
+                likes: review.likes,
+                createdAt: new Date(review.created_at).toISOString(),
+                updatedAt: new Date(review.updated_at).toISOString(),
+            }));
+
+            res.status(201).json(getResponse<MultipleReviewsResponse>({
+                success: true,
+                data: reviews
+            }));
+
+        } catch (err) {
+            next(err);
+        }
+    }
+
+    public getReviewsByPopularity = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+
+            const foundReviews = await this.config.reviewRepository.getPopularReviews();
+
+
+            if (foundReviews.length === 0) {
+                res.status(200).json(
+                    {
+                        success: true,
+                        data: null,
+                        message: "No review found"
+                    } as SuccessResponse<any>
+                )
+                return;
+            }
+
+            const reviews: ReviewResponse[] = foundReviews.map(review => ({
+                id: review.id,
+                gameId: review.game_id,
+                userId: review.user_id,
+                rating: review.rating,
+                review: review.review,
+                likes: review.likes,
                 createdAt: new Date(review.created_at).toISOString(),
                 updatedAt: new Date(review.updated_at).toISOString(),
             }));
@@ -218,6 +260,7 @@ export class ReviewController extends AController {
                 userId: foundReviews[0].user_id,
                 rating: foundReviews[0].rating,
                 review: foundReviews[0].review,
+                likes: foundReviews[0].likes,
                 createdAt: new Date(foundReviews[0].created_at).toISOString(),
                 updatedAt: new Date(foundReviews[0].updated_at).toISOString(),
             };
@@ -231,6 +274,9 @@ export class ReviewController extends AController {
             next(err);
         }
     }
+
+
+
 
     public getMyReviewForAGame = async (req: Request, res: Response, next: NextFunction) => {
         try {
@@ -265,6 +311,7 @@ export class ReviewController extends AController {
                 userId: createdReview.user_id,
                 rating: createdReview.rating,
                 review: createdReview.review,
+                likes: 0,
                 createdAt: new Date(createdReview.created_at).toISOString(),
                 updatedAt: new Date(createdReview.updated_at).toISOString(),
             }));
@@ -293,6 +340,7 @@ export class ReviewController extends AController {
                 userId: updatedReview.user_id,
                 rating: updatedReview.rating,
                 review: updatedReview.review,
+                likes: 0,
                 createdAt: new Date(updatedReview.created_at).toISOString(),
                 updatedAt: new Date(updatedReview.updated_at).toISOString(),
             }));
@@ -322,6 +370,7 @@ export class ReviewController extends AController {
                 userId: deletedReview[0].user_id,
                 rating: deletedReview[0].rating,
                 review: deletedReview[0].review,
+                likes: 0,
                 createdAt: new Date(deletedReview[0].created_at).toISOString(),
                 updatedAt: new Date(deletedReview[0].updated_at).toISOString(),
             }));
