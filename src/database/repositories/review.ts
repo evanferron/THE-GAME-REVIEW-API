@@ -135,4 +135,19 @@ export class ReviewRepository extends ARepository<ReviewEntry> {
 
         return result.rows;
     }
+
+    public async handleLikeReview(reviewId: UUID, userId: UUID): Promise<void> {
+        const result = await this.query(
+            `INSERT INTO reviews_likes (review_id, user_id) VALUES ($1, $2)
+             ON CONFLICT (review_id, user_id) DO NOTHING;`,
+            [reviewId, userId]
+        );
+
+        if (result.rowCount === 0) {
+            await this.query(
+                `DELETE FROM reviews_likes WHERE review_id = $1 AND user_id = $2;`,
+                [reviewId, userId]
+            );
+        }
+    }
 }

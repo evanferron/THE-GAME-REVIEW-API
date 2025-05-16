@@ -89,6 +89,26 @@ export class ReviewController extends AController {
         }
     }
 
+    public likeReview = async (req: Request, res: Response, next: NextFunction) => {
+
+        try {
+            const review = {
+                id: req.body.id,
+            } as ReviewEntry;
+            const user_id = getUserFromRequest(req).userId as UUID;
+
+            this.config.reviewRepository.handleLikeReview(review.id, user_id);
+
+            res.status(201).json({
+                success: true,
+                message: "handle like successfully",
+            } as SuccessResponse<any>);
+        } catch (err) {
+            next(err);
+        }
+    }
+
+
     public getReviewsByGameId = async (req: Request, res: Response, next: NextFunction) => {
         try {
 

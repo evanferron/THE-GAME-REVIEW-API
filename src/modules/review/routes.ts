@@ -17,6 +17,7 @@ export function createReviewRoutes(): Router {
     router.get("/my_reviews", authMiddleware, reviewController.getMyReviews);
     router.get("/my_review_for_game/:game_id", authMiddleware, reviewController.getMyReviewForAGame);
     router.put("/", authMiddleware, reviewController.updateReview);
+    router.post("/like", authMiddleware, reviewController.likeReview);
     router.delete("/", authMiddleware, reviewController.deleteReview);
 
     return router;
