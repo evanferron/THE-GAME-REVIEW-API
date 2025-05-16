@@ -32,7 +32,7 @@ export class AuthController extends AController {
                 throw new UnauthorizedError("User is deleted");
             }
 
-            res.status(201).json(getResponse<AuthResponse>({
+            res.status(200).json(getResponse<AuthResponse>({
                 pseudo: foundUsers[0].pseudo,
                 token: generateToken(foundUsers[0].id),
                 refreshToken: generateRefreshToken(foundUsers[0].id, "7d")
@@ -58,6 +58,23 @@ export class AuthController extends AController {
             user.profil_picture_id = randomInt(1, 5);
 
             const createdUser = await this.config.userRepository.create(user);
+            if (createdUser == null) {
+                throw new ValidationError("User already exists");
+            }
+
+            // create default lists
+            await this.config.listRepository.create({
+                user_id: createdUser.id,
+                name: "Like",
+                description: "Les jeux que j'aime",
+                is_private: false,
+            })
+            await this.config.listRepository.create({
+                user_id: createdUser.id,
+                name: "Favorite",
+                description: "Mes jeux préférés",
+                is_private: false,
+            })
 
             res.status(201).json(getResponse<AuthResponse>({
                 pseudo: createdUser.pseudo,
