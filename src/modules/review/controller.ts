@@ -25,6 +25,7 @@ export class ReviewController extends AController {
                         message: "No review found"
                     } as SuccessResponse<any>
                 )
+                return
             }
 
             const reviews: ReviewResponse[] = foundReviews.map(review => ({
@@ -33,6 +34,8 @@ export class ReviewController extends AController {
                 userId: review.user_id,
                 rating: review.rating,
                 review: review.review,
+                owner_pseudo: review.owner_pseudo,
+                owner_picture: review.owner_picture,
                 likes: review.likes,
                 createdAt: new Date(review.created_at).toISOString(),
                 updatedAt: new Date(review.updated_at).toISOString(),
@@ -66,12 +69,15 @@ export class ReviewController extends AController {
                         message: "No review found"
                     } as SuccessResponse<any>
                 )
+                return
             }
 
             const reviews: ReviewResponse[] = foundReviews.map(review => ({
                 id: review.id,
                 gameId: review.game_id,
                 userId: review.user_id,
+                owner_pseudo: review.owner_pseudo,
+                owner_picture: review.owner_picture,
                 rating: review.rating,
                 review: review.review,
                 likes: review.likes,
@@ -126,12 +132,15 @@ export class ReviewController extends AController {
                         message: "No review found"
                     } as SuccessResponse<any>
                 )
+                return
             }
 
             const reviews: ReviewResponse[] = foundReviews.map(review => ({
                 id: review.id,
                 gameId: review.game_id,
                 userId: review.user_id,
+                owner_pseudo: review.owner_pseudo,
+                owner_picture: review.owner_picture,
                 rating: review.rating,
                 review: review.review,
                 likes: review.likes,
@@ -170,12 +179,15 @@ export class ReviewController extends AController {
                         message: "No review found"
                     } as SuccessResponse<any>
                 )
+                return
             }
 
             const reviews: ReviewResponse[] = foundReviews.map(review => ({
                 id: review.id,
                 gameId: review.game_id,
                 userId: review.user_id,
+                owner_pseudo: review.owner_pseudo,
+                owner_picture: review.owner_picture,
                 rating: review.rating,
                 review: review.review,
                 likes: review.likes,
@@ -214,6 +226,8 @@ export class ReviewController extends AController {
                 id: review.id,
                 gameId: review.game_id,
                 userId: review.user_id,
+                owner_pseudo: review.owner_pseudo,
+                owner_picture: review.owner_picture,
                 rating: review.rating,
                 review: review.review,
                 likes: review.likes,
@@ -246,6 +260,7 @@ export class ReviewController extends AController {
 
     public getReviewsByUserIdAndGameId = async (req: Request, res: Response, next: NextFunction) => {
         try {
+            console.log("getReviewsByUserIdAndGameId");
             let user_id: UUID;
 
             if (!req.params.user_id || req.params.user_id === "") {
@@ -262,6 +277,9 @@ export class ReviewController extends AController {
                 game_id = Number(req.params.game_id)
             }
 
+            console.log("user_id", user_id);
+            console.log("game_id", game_id);
+
             const foundReviews = await this.config.reviewRepository.getReviewsByUserAndGame(user_id, game_id);
 
             if (foundReviews.length === 0) {
@@ -272,12 +290,15 @@ export class ReviewController extends AController {
                         message: "No review found"
                     } as SuccessResponse<any>
                 )
+                return;
             }
 
             const review: ReviewResponse = {
                 id: foundReviews[0].id,
                 gameId: foundReviews[0].game_id,
                 userId: foundReviews[0].user_id,
+                owner_pseudo: foundReviews[0].owner_pseudo,
+                owner_picture: foundReviews[0].owner_picture,
                 rating: foundReviews[0].rating,
                 review: foundReviews[0].review,
                 likes: foundReviews[0].likes,
@@ -329,6 +350,8 @@ export class ReviewController extends AController {
                 id: createdReview.id,
                 gameId: createdReview.game_id,
                 userId: createdReview.user_id,
+                owner_pseudo: "",
+                owner_picture: 1,
                 rating: createdReview.rating,
                 review: createdReview.review,
                 likes: 0,
@@ -358,6 +381,8 @@ export class ReviewController extends AController {
                 id: updatedReview.id,
                 gameId: updatedReview.game_id,
                 userId: updatedReview.user_id,
+                owner_pseudo: "",
+                owner_picture: 1,
                 rating: updatedReview.rating,
                 review: updatedReview.review,
                 likes: 0,
@@ -388,6 +413,8 @@ export class ReviewController extends AController {
                 id: deletedReview[0].id,
                 gameId: deletedReview[0].game_id,
                 userId: deletedReview[0].user_id,
+                owner_pseudo: "",
+                owner_picture: 1,
                 rating: deletedReview[0].rating,
                 review: deletedReview[0].review,
                 likes: 0,

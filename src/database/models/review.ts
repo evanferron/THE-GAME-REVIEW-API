@@ -13,4 +13,6 @@ export interface ReviewEntry extends IEntry {
 
 export interface ReviewData extends ReviewEntry {
     likes: number;
+    owner_pseudo: string;
+    owner_picture: number;
 }

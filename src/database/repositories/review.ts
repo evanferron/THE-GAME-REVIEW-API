@@ -13,10 +13,11 @@ export class ReviewRepository extends ARepository<ReviewEntry> {
     */
     public async getAllReview(): Promise<ReviewData[]> {
         const result = await this.query<ReviewData>(
-            `SELECT r.*, COUNT(rl.review_id) as like_count
+            `SELECT r.*, COUNT(rl.review_id) as like_count, u.pseudo as owner_pseudo, u.profil_picture_id as owner_picture
              FROM reviews r
              LEFT JOIN reviews_likes rl ON r.id = rl.review_id
-             GROUP BY r.id;`
+             Left JOIN users u ON r.user_id = u.id
+             GROUP BY r.id, u.pseudo, u.profil_picture_id;`
         );
 
         return result.rows;
@@ -30,11 +31,12 @@ export class ReviewRepository extends ARepository<ReviewEntry> {
     */
     public async getReviewsByGame(gameId: bigint): Promise<ReviewData[]> {
         const result = await this.query<ReviewData>(
-            `SELECT r.*, COUNT(rl.review_id) as like_count
+            `SELECT r.*, COUNT(rl.review_id) as like_count, u.pseudo as owner_pseudo, u.profil_picture_id as owner_picture
              FROM reviews r
              LEFT JOIN reviews_likes rl ON r.id = rl.review_id
+             Left JOIN users u ON r.user_id = u.id
              WHERE r.game_id = $1
-             GROUP BY r.id;`,
+             GROUP BY r.id, u.pseudo, u.profil_picture_id;`,
             [gameId]
         );
 
@@ -49,11 +51,12 @@ export class ReviewRepository extends ARepository<ReviewEntry> {
 */
     public async getReviewsById(id: UUID): Promise<ReviewData[]> {
         const result = await this.query<ReviewData>(
-            `SELECT r.*, COUNT(rl.review_id) as like_count
+            `SELECT r.*, COUNT(rl.review_id) as like_count, u.pseudo as owner_pseudo, u.profil_picture_id as owner_picture
              FROM reviews r
              LEFT JOIN reviews_likes rl ON r.id = rl.review_id
+             Left JOIN users u ON r.user_id = u.id
              WHERE r.id = $1
-             GROUP BY r.id;`,
+             GROUP BY r.id, u.pseudo, u.profil_picture_id;`,
             [id]
         );
 
@@ -68,11 +71,12 @@ export class ReviewRepository extends ARepository<ReviewEntry> {
     */
     public async getReviewsByUser(userId: UUID): Promise<ReviewData[]> {
         const result = await this.query<ReviewData>(
-            `SELECT r.*, COUNT(rl.review_id) as like_count
+            `SELECT r.*, COUNT(rl.review_id) as like_count, u.pseudo as owner_pseudo, u.profil_picture_id as owner_picture
              FROM reviews r
              LEFT JOIN reviews_likes rl ON r.id = rl.review_id
+             Left JOIN users u ON r.user_id = u.id
              WHERE r.user_id = $1
-             GROUP BY r.id;`,
+             GROUP BY r.id, u.pseudo, u.profil_picture_id;`,
             [userId]
         );
 
@@ -87,11 +91,12 @@ export class ReviewRepository extends ARepository<ReviewEntry> {
     */
     public async getReviewsByUserAndGame(userId: UUID, game_id: number): Promise<ReviewData[]> {
         const result = await this.query<ReviewData>(
-            `SELECT r.*, COUNT(rl.review_id) as like_count
+            `SELECT r.*, COUNT(rl.review_id) as like_count, u.pseudo as owner_pseudo, u.profil_picture_id as owner_picture
              FROM reviews r
              LEFT JOIN reviews_likes rl ON r.id = rl.review_id
+             Left JOIN users u ON r.user_id = u.id
              WHERE r.user_id = $1 AND r.game_id = $2
-             GROUP BY r.id;`,
+             GROUP BY r.id, u.pseudo, u.profil_picture_id;`,
             [userId, game_id]
         );
 
@@ -107,9 +112,10 @@ export class ReviewRepository extends ARepository<ReviewEntry> {
  */
     public async findGameReviewByUser(userId: UUID, gameId: number): Promise<ReviewData | null> {
         const result = await this.query<ReviewData>(
-            `SELECT r.*, COUNT(rl.review_id) as like_count
+            `SELECT r.*, COUNT(rl.review_id) as like_count, u.pseudo as owner_pseudo, u.profil_picture_id as owner_picture
              FROM reviews r
              LEFT JOIN reviews_likes rl ON r.id = rl.review_id
+             Left JOIN users u ON r.user_id = u.id
              WHERE r.user_id = $1 AND r.game_id = $2
              GROUP BY r.id
              LIMIT 1;`,
@@ -125,10 +131,11 @@ export class ReviewRepository extends ARepository<ReviewEntry> {
 
     public async getPopularReviews(): Promise<ReviewData[]> {
         const result = await this.query<ReviewData>(
-            `SELECT r.id, r.game_id, r.user_id, r.rating, r.review, r.created_at, r.updated_at, COUNT(rl.review_id) as like_count
-         FROM reviews r
-         LEFT JOIN reviews_likes rl ON r.id = rl.review_id
-         GROUP BY r.id
+            `SELECT r.*, COUNT(rl.review_id) as like_count, u.pseudo as owner_pseudo, u.profil_picture_id as owner_picture
+             FROM reviews r
+             LEFT JOIN reviews_likes rl ON r.id = rl.review_id
+             Left JOIN users u ON r.user_id = u.id
+         GROUP BY r.id , u.pseudo, u.profil_picture_id
          ORDER BY like_count DESC
          LIMIT 10;`
         );
