@@ -10,7 +10,7 @@ export class ReviewController extends AController {
     public getAllReviews = async (req: Request, res: Response, next: NextFunction) => {
         try {
 
-            const foundReviews = await this.config.reviewRepository.getAllReview();
+            const foundReviews = await this.config.reviewRepository.getAllReview() as any[];
 
             if (foundReviews.length === 0) {
                 throw new ValidationError("No follow found");
@@ -36,12 +36,12 @@ export class ReviewController extends AController {
                 review: review.review,
                 owner_pseudo: review.owner_pseudo,
                 owner_picture: review.owner_picture,
-                likes: review.likes,
+                likes: review.like_count,
                 createdAt: new Date(review.created_at).toISOString(),
                 updatedAt: new Date(review.updated_at).toISOString(),
             }));
 
-            res.status(201).json(getResponse<MultipleReviewsResponse>({
+            res.status(200).json(getResponse<MultipleReviewsResponse>({
                 success: true,
                 data: reviews
             }));
@@ -55,10 +55,10 @@ export class ReviewController extends AController {
 
         try {
             const review = {
-                id: req.body.id,
+                id: req.params.id,
             } as ReviewEntry;
 
-            const foundReviews = await this.config.reviewRepository.getReviewsById(review.id);
+            const foundReviews = await this.config.reviewRepository.getReviewsById(review.id) as any[];
 
 
             if (foundReviews.length === 0) {
@@ -72,6 +72,9 @@ export class ReviewController extends AController {
                 return
             }
 
+
+            console.log(foundReviews);
+
             const reviews: ReviewResponse[] = foundReviews.map(review => ({
                 id: review.id,
                 gameId: review.game_id,
@@ -80,12 +83,12 @@ export class ReviewController extends AController {
                 owner_picture: review.owner_picture,
                 rating: review.rating,
                 review: review.review,
-                likes: review.likes,
+                likes: review.like_count,
                 createdAt: new Date(review.created_at).toISOString(),
                 updatedAt: new Date(review.updated_at).toISOString(),
             }));
 
-            res.status(201).json(getResponse<SingleReviewResponse>({
+            res.status(200).json(getResponse<SingleReviewResponse>({
                 success: true,
                 data: reviews[0]
             }));
@@ -118,11 +121,16 @@ export class ReviewController extends AController {
     public getReviewsByGameId = async (req: Request, res: Response, next: NextFunction) => {
         try {
 
+            const game_id = req.params.game_id;
+            if (!game_id || isNaN(Number(game_id))) {
+                throw new ValidationError('game_id is required');
+            }
+
             const review = {
-                game_id: req.body.game_id,
+                game_id: req.params.game_id as unknown as bigint,
             } as ReviewEntry;
 
-            const foundReviews = await this.config.reviewRepository.getReviewsByGame(review.game_id);
+            const foundReviews = await this.config.reviewRepository.getReviewsByGame(review.game_id) as any[];
 
             if (foundReviews.length === 0) {
                 res.status(200).json(
@@ -143,12 +151,12 @@ export class ReviewController extends AController {
                 owner_picture: review.owner_picture,
                 rating: review.rating,
                 review: review.review,
-                likes: review.likes,
+                likes: review.like_count,
                 createdAt: new Date(review.created_at).toISOString(),
                 updatedAt: new Date(review.updated_at).toISOString(),
             }));
 
-            res.status(201).json(getResponse<MultipleReviewsResponse>({
+            res.status(200).json(getResponse<MultipleReviewsResponse>({
                 success: true,
                 data: reviews
             }));
@@ -168,7 +176,7 @@ export class ReviewController extends AController {
                 user_id = req.params.id as UUID
             }
 
-            const foundReviews = await this.config.reviewRepository.getReviewsByUser(user_id);
+            const foundReviews = await this.config.reviewRepository.getReviewsByUser(user_id) as any[];
 
 
             if (foundReviews.length === 0) {
@@ -190,7 +198,7 @@ export class ReviewController extends AController {
                 owner_picture: review.owner_picture,
                 rating: review.rating,
                 review: review.review,
-                likes: review.likes,
+                likes: review.like_count,
                 createdAt: new Date(review.created_at).toISOString(),
                 updatedAt: new Date(review.updated_at).toISOString(),
             }));
@@ -208,7 +216,7 @@ export class ReviewController extends AController {
     public getReviewsByPopularity = async (req: Request, res: Response, next: NextFunction) => {
         try {
 
-            const foundReviews = await this.config.reviewRepository.getPopularReviews();
+            const foundReviews = await this.config.reviewRepository.getPopularReviews() as any[];
 
 
             if (foundReviews.length === 0) {
@@ -230,12 +238,12 @@ export class ReviewController extends AController {
                 owner_picture: review.owner_picture,
                 rating: review.rating,
                 review: review.review,
-                likes: review.likes,
+                likes: review.like_count,
                 createdAt: new Date(review.created_at).toISOString(),
                 updatedAt: new Date(review.updated_at).toISOString(),
             }));
 
-            res.status(201).json(getResponse<MultipleReviewsResponse>({
+            res.status(200).json(getResponse<MultipleReviewsResponse>({
                 success: true,
                 data: reviews
             }));
@@ -260,7 +268,6 @@ export class ReviewController extends AController {
 
     public getReviewsByUserIdAndGameId = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            console.log("getReviewsByUserIdAndGameId");
             let user_id: UUID;
 
             if (!req.params.user_id || req.params.user_id === "") {
@@ -272,15 +279,12 @@ export class ReviewController extends AController {
             let game_id: number;
 
             if (!req.params.game_id || isNaN(Number(req.params.game_id))) {
-                throw new ValidationError('user_id is required');
+                throw new ValidationError('game_id is required');
             } else {
                 game_id = Number(req.params.game_id)
             }
 
-            console.log("user_id", user_id);
-            console.log("game_id", game_id);
-
-            const foundReviews = await this.config.reviewRepository.getReviewsByUserAndGame(user_id, game_id);
+            const foundReviews = await this.config.reviewRepository.getReviewsByUserAndGame(user_id, game_id) as any[];
 
             if (foundReviews.length === 0) {
                 res.status(200).json(
@@ -293,6 +297,8 @@ export class ReviewController extends AController {
                 return;
             }
 
+            console.log(foundReviews);
+
             const review: ReviewResponse = {
                 id: foundReviews[0].id,
                 gameId: foundReviews[0].game_id,
@@ -301,12 +307,12 @@ export class ReviewController extends AController {
                 owner_picture: foundReviews[0].owner_picture,
                 rating: foundReviews[0].rating,
                 review: foundReviews[0].review,
-                likes: foundReviews[0].likes,
+                likes: foundReviews[0].like_count,
                 createdAt: new Date(foundReviews[0].created_at).toISOString(),
                 updatedAt: new Date(foundReviews[0].updated_at).toISOString(),
             };
 
-            res.status(201).json(getResponse<SingleReviewResponse>({
+            res.status(200).json(getResponse<SingleReviewResponse>({
                 success: true,
                 data: review
             }));
@@ -323,7 +329,7 @@ export class ReviewController extends AController {
         try {
             const user_id = getUserFromRequest(req).userId as UUID;
 
-            req.params.id = user_id;
+            req.params.user_id = user_id;
 
             await this.getReviewsByUserIdAndGameId(req, res, next);
         } catch (err) {

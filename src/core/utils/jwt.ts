@@ -3,8 +3,8 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 import { StringValue } from "ms";
 import { UnauthorizedError } from "../";
 
-const secret = process.env.JWT_SECRET ? process.env.JWT_SECRET : "secret_key";
-const refreshSecret = process.env.JWT_REFRESH_SECRET ? process.env.JWT_REFRESH_SECRET : "refresh_secret_key";
+const secret = process.env.JWT_SECRET ?? "secret_key";
+const refreshSecret = process.env.JWT_REFRESH_SECRET ?? "refresh_secret_key";
 
 export function generateToken(userId: UUID, isAdmin: boolean = false, expiresIn: string = "15m"): string {
     return jwt.sign({ userId, isAdmin }, secret, { expiresIn: expiresIn as StringValue });

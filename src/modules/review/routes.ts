@@ -11,7 +11,7 @@ export function createReviewRoutes(): Router {
     router.get("/top", reviewController.getReviewsByPopularity);
 
     router.get("/:id", reviewController.getReviewById);
-    router.get("/get_by_game_id", reviewController.getReviewsByGameId);
+    router.get("/get_by_game_id/:game_id", reviewController.getReviewsByGameId);
     router.get("/get_by_user_id/:id", reviewController.getReviewsByUserId);
     router.get("/:user_id&game_id", reviewController.getReviewsByUserIdAndGameId);
     router.get("/my_reviews", authMiddleware, reviewController.getMyReviews);

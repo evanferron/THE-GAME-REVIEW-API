@@ -117,7 +117,7 @@ export class ReviewRepository extends ARepository<ReviewEntry> {
              LEFT JOIN reviews_likes rl ON r.id = rl.review_id
              Left JOIN users u ON r.user_id = u.id
              WHERE r.user_id = $1 AND r.game_id = $2
-             GROUP BY r.id
+             GROUP BY r.id , u.pseudo, u.profil_picture_id
              LIMIT 1;`,
             [userId, gameId]
         );
@@ -144,17 +144,38 @@ export class ReviewRepository extends ARepository<ReviewEntry> {
     }
 
     public async handleLikeReview(reviewId: UUID, userId: UUID): Promise<void> {
-        const result = await this.query(
-            `INSERT INTO reviews_likes (review_id, user_id) VALUES ($1, $2)
-             ON CONFLICT (review_id, user_id) DO NOTHING;`,
+        const check = await this.query(
+            `SELECT 1 FROM reviews_likes WHERE review_id = $1 AND user_id = $2;`,
             [reviewId, userId]
         );
 
-        if (result.rowCount === 0) {
+        if ((check.rowCount ?? 0) > 0) {
             await this.query(
                 `DELETE FROM reviews_likes WHERE review_id = $1 AND user_id = $2;`,
                 [reviewId, userId]
             );
+        } else {
+            await this.query(
+                `INSERT INTO reviews_likes (review_id, user_id) VALUES ($1, $2);`,
+                [reviewId, userId]
+            );
         }
     }
+
+    //  public async handleLikeReview(reviewId: UUID, userId: UUID): Promise<void> {
+    //     const result = await this.query(
+    //         `INSERT INTO reviews_likes (review_id, user_id) VALUES ($1, $2)
+    //          ON CONFLICT (review_id, user_id) DO NOTHING;`,
+    //         [reviewId, userId]
+    //     );
+
+    //     if (result.rowCount === 0) {
+    //         await this.query(
+    //             `DELETE FROM reviews_likes WHERE review_id = $1 AND user_id = $2;`,
+    //             [reviewId, userId]
+    //         );
+    //     }
+    // }
+
+
 }

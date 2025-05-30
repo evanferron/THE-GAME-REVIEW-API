@@ -20,7 +20,6 @@ export class GameController extends AController {
 
             const game = await this.config.twitchService.getGameDetails(gameId);
 
-            console.log(game);
             const response = <GameDetailsResponse>{
                 id: game.id,
                 name: game.name,
