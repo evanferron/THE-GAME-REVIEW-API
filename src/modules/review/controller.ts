@@ -73,8 +73,6 @@ export class ReviewController extends AController {
             }
 
 
-            console.log(foundReviews);
-
             const reviews: ReviewResponse[] = foundReviews.map(review => ({
                 id: review.id,
                 gameId: review.game_id,
@@ -296,8 +294,6 @@ export class ReviewController extends AController {
                 )
                 return;
             }
-
-            console.log(foundReviews);
 
             const review: ReviewResponse = {
                 id: foundReviews[0].id,

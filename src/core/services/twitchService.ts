@@ -151,7 +151,7 @@ export class TwitchService {
     public async getTopGames(limit: number = 10) {
         try {
             const query = `
-            fields id, name, cover.url, total_rating_count	;
+            fields id, name, cover.url, total_rating_count, involved_companies.company.name	;
             sort total_rating_count	 desc;
             limit ${limit};
         `;
@@ -160,8 +160,8 @@ export class TwitchService {
                 name: string;
                 cover: { url: string };
                 total_rating_count: number;
+                involved_companies: { company: { name: string } }[];
             }[]>("/games", query);
-
             for (const game of games) {
                 if (game.cover?.url) {
                     game.cover.url = game.cover.url.replace('t_thumb', 't_cover_big');
