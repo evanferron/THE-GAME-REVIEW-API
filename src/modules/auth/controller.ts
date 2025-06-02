@@ -35,7 +35,8 @@ export class AuthController extends AController {
             res.status(200).json(getResponse<AuthResponse>({
                 pseudo: foundUsers[0].pseudo,
                 token: generateToken(foundUsers[0].id),
-                refreshToken: generateRefreshToken(foundUsers[0].id, "7d")
+                refreshToken: generateRefreshToken(foundUsers[0].id, "7d"),
+                profile_picture_id: foundUsers[0].profil_picture_id,
             }));
         } catch (err) {
             next(err);
@@ -79,7 +80,8 @@ export class AuthController extends AController {
             res.status(201).json(getResponse<AuthResponse>({
                 pseudo: createdUser.pseudo,
                 token: generateToken(createdUser.id),
-                refreshToken: generateRefreshToken(createdUser.id)
+                refreshToken: generateRefreshToken(createdUser.id),
+                profile_picture_id: createdUser.profil_picture_id,
             }));
         } catch (err) {
             next(err);
@@ -98,7 +100,8 @@ export class AuthController extends AController {
             res.status(201).json(getResponse<AuthResponse>({
                 pseudo: tokenData.userId,
                 token: generateToken(tokenData.userId),
-                refreshToken: refreshToken
+                refreshToken: refreshToken,
+                profile_picture_id: tokenData.profilePictureId ?? null,
             }));
 
         } catch (err) {

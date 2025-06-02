@@ -49,6 +49,7 @@ export function parseRefreshToken(token: string): TokenData {
 class TokenData {
     userId: UUID;
     isAdmin: boolean;
+    profilePictureId: number | undefined;
 
     constructor(userId: UUID, isAdmin = false) {
         this.userId = userId;
