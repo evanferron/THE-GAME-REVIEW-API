@@ -2,6 +2,7 @@ import { Config, getUserFromRequest, AController, ValidationError, getResponse }
 import { NextFunction, Request, Response } from "express";
 import { GameListEntry } from "../../database/models/gameList";
 import { MultipleGamesListsResponse, GameListResponse, SingleGameListResponse } from "./response";
+import { GameDetailsResponse } from "modules/game/response";
 
 
 export class GameListController extends AController {
@@ -44,6 +45,49 @@ export class GameListController extends AController {
                 listId: gameList.list_id,
                 addedAt: new Date(gameList.added_at).toISOString(),
            }));
+
+           res.status(201).json(getResponse<MultipleGamesListsResponse>({
+               success: true,
+               data: gameslists
+           }));
+
+       } catch (err) {
+           next(err);
+       } 
+   }
+
+   public getGamesListsByName = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const gameList = {
+                name: req.body.name,
+                user_id: getUserFromRequest(req).userId,
+            } as any;
+
+            const foundLists = await this.config.gameListRepository.GetLikedGamesList(gameList.name, gameList.user_id);
+            
+            // Extrait les game_id sous forme de number
+            const list_ids = foundLists.map(gameList => Number(gameList.game_id));
+
+            // Récupérer les infos des jeux
+            const games = await this.config.twitchService.getGamesPreview(list_ids);
+
+            // Créer un map avoir les infos des jeux
+            const gamesMap = new Map<number, typeof games[0]>();
+            for (const game of games) {
+                gamesMap.set(game.id, game);
+            }
+
+            const gameslists: GameListResponse[] = foundLists.map(gameList => {
+                const gameInfo = gamesMap.get(Number(gameList.game_id));
+                return {
+                    gameId: gameList.game_id,
+                    listId: gameList.list_id,
+                    addedAt: new Date(gameList.added_at).toISOString(),
+                    name: gameInfo?.name,
+                    cover: gameInfo?.cover?.url,
+                    aggregated_rating: gameInfo?.aggregated_rating
+                };
+            });
 
            res.status(201).json(getResponse<MultipleGamesListsResponse>({
                success: true,
