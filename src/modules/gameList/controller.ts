@@ -67,9 +67,14 @@ export class GameListController extends AController {
             
             // Extrait les game_id sous forme de number
             const list_ids = foundLists.map(gameList => Number(gameList.game_id));
-
+            
+            if (list_ids.length === 0) {
+                throw new ValidationError("No games found for the specified list name");
+            }
+            console.log("avant twitch")
             // Récupérer les infos des jeux
             const games = await this.config.twitchService.getGamesPreview(list_ids);
+            console.log("Games retrieved:", games);
 
             // Créer un map avoir les infos des jeux
             const gamesMap = new Map<number, typeof games[0]>();
@@ -82,7 +87,6 @@ export class GameListController extends AController {
                 return {
                     gameId: gameList.game_id,
                     listId: gameList.list_id,
-                    addedAt: new Date(gameList.added_at).toISOString(),
                     name: gameInfo?.name,
                     cover: gameInfo?.cover?.url,
                     aggregated_rating: gameInfo?.aggregated_rating

@@ -46,7 +46,9 @@ export class GameListRepository extends ARepository<GameListEntry> {
     public async GetLikedGamesList(listName: string, userId: UUID): Promise<GameListEntry[]> {
 
         const result = await this.query<GameListEntry>(
-            `SELECT * FROM games_lists WHERE name = $1 AND user_id = $2;`,
+            `SELECT gl.game_id FROM games_lists gl
+                JOIN lists l ON gl.list_id = l.id
+                WHERE l.name = $1 AND l.user_id = $2;`,
             [listName, userId]
         );
 
