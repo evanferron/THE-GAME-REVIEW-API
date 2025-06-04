@@ -43,7 +43,7 @@ export class GameListRepository extends ARepository<GameListEntry> {
     * @param id id to delete
     * @returns entrie that are deleted
     */
-    public async GetLikedGamesList(listName: string, userId: UUID): Promise<GameListEntry[]> {
+    public async GetGamesListByName(listName: string, userId: UUID): Promise<GameListEntry[]> {
 
         const result = await this.query<GameListEntry>(
             `SELECT gl.game_id FROM games_lists gl
