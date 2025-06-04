@@ -87,7 +87,8 @@ export class GameListController extends AController {
                     listId: gameList.list_id,
                     name: gameInfo?.name,
                     cover: gameInfo?.cover?.url,
-                    aggregated_rating: gameInfo?.aggregated_rating
+                    aggregated_rating: gameInfo?.aggregated_rating,
+                    developper: gameInfo?.involved_companies?.[0]?.company?.name,
                 };
             });
 

@@ -8,6 +8,7 @@ export interface GameListResponse extends IResponse {
     name?: string;
     cover?: string;
     aggregated_rating?: number;
+    developper?: string;
 }
 
 export type SingleGameListResponse = SuccessResponse<GameListResponse>;

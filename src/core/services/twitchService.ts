@@ -202,7 +202,7 @@ export class TwitchService {
     public async getGamesPreview(gameIdentifiers: Array<string | number>) {
         try {
             const query = `
-            fields id, name, cover.url, aggregated_rating;
+            fields id, name, cover.url, aggregated_rating, involved_companies.company.name;
             where id = (${gameIdentifiers.join(",")});
         `;
 
@@ -211,6 +211,7 @@ export class TwitchService {
                 name: string;
                 cover: { url: string };
                 aggregated_rating: number;
+                involved_companies: { company: { name: string } }[];
             }[]>("/games", query);
 
             for (const game of games) {
