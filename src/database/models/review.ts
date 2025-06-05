@@ -15,4 +15,5 @@ export interface ReviewData extends ReviewEntry {
     likes: number;
     owner_pseudo: string;
     owner_picture: number;
+    has_liked: boolean;
 }

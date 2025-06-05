@@ -9,6 +9,7 @@ export class ReviewController extends AController {
 
     public getAllReviews = async (req: Request, res: Response, next: NextFunction) => {
         try {
+            const user_id = getUserFromRequest(req)?.userId as UUID;
 
             const foundReviews = await this.config.reviewRepository.getAllReview() as any[];
 
@@ -40,7 +41,7 @@ export class ReviewController extends AController {
                 createdAt: new Date(review.created_at).toISOString(),
                 updatedAt: new Date(review.updated_at).toISOString(),
             }));
-
+            await this.getReviewsByUserIdAndGameId(req, res, next);
             res.status(200).json(getResponse<MultipleReviewsResponse>({
                 success: true,
                 data: reviews
@@ -102,7 +103,7 @@ export class ReviewController extends AController {
             const review = {
                 id: req.body.id,
             } as ReviewEntry;
-            const user_id = getUserFromRequest(req).userId as UUID;
+            const user_id = getUserFromRequest(req)?.userId as UUID;
 
             this.config.reviewRepository.handleLikeReview(review.id, user_id);
 
@@ -166,15 +167,17 @@ export class ReviewController extends AController {
 
     public getReviewsByUserId = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            let user_id: UUID;
+            const user_id = getUserFromRequest(req)?.userId as UUID;
+
+            let search_user_id: UUID;
 
             if (!req.params.id || req.params.id === "") {
                 throw new ValidationError('user_id is required');
             } else {
-                user_id = req.params.id as UUID
+                search_user_id = req.params.id as UUID
             }
 
-            const foundReviews = await this.config.reviewRepository.getReviewsByUser(user_id) as any[];
+            const foundReviews = await this.config.reviewRepository.getReviewsByUser(search_user_id) as any[];
 
 
             if (foundReviews.length === 0) {
@@ -213,9 +216,9 @@ export class ReviewController extends AController {
 
     public getReviewsByPopularity = async (req: Request, res: Response, next: NextFunction) => {
         try {
+            const user_id = getUserFromRequest(req)?.userId as UUID;
 
-            const foundReviews = await this.config.reviewRepository.getPopularReviews() as any[];
-
+            const foundReviews = await this.config.reviewRepository.getPopularReviews(user_id) as any[];
 
             if (foundReviews.length === 0) {
                 res.status(200).json(
@@ -253,7 +256,7 @@ export class ReviewController extends AController {
 
     public getMyReviews = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const user_id = getUserFromRequest(req).userId as UUID;
+            const user_id = getUserFromRequest(req)?.userId as UUID;
 
             req.params.id = user_id;
 
@@ -323,7 +326,7 @@ export class ReviewController extends AController {
 
     public getMyReviewForAGame = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const user_id = getUserFromRequest(req).userId as UUID;
+            const user_id = getUserFromRequest(req)?.userId as UUID;
 
             req.params.user_id = user_id;
 
@@ -339,7 +342,7 @@ export class ReviewController extends AController {
         try {
             const review = {
                 game_id: req.body.game_id,
-                user_id: getUserFromRequest(req).userId,
+                user_id: getUserFromRequest(req)?.userId,
                 rating: req.body.rating,
                 review: req.body.review,
                 created_at: new Date(),

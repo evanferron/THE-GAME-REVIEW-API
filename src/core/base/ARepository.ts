@@ -9,8 +9,6 @@ export abstract class ARepository<MyEntry extends IEntry> {
         this.pool = pool;
     }
 
-
-
     /**
      * method that will interact directly to the database
      * 

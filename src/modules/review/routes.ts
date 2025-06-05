@@ -1,19 +1,20 @@
 import { Router } from "express";
 import { authMiddleware } from "../../core";
 import { ReviewController } from "./controller";
+import { getUserIfLogged } from "@middlewares/getUserIfLogged";
 
 export function createReviewRoutes(): Router {
     const router = Router();
     const reviewController = new ReviewController();
 
     router.post("/", authMiddleware, reviewController.createReview);
-    router.get("/", reviewController.getAllReviews);
-    router.get("/top", reviewController.getReviewsByPopularity);
+    router.get("/", getUserIfLogged, reviewController.getAllReviews);
+    router.get("/top", getUserIfLogged, reviewController.getReviewsByPopularity);
 
-    router.get("/:id", reviewController.getReviewById);
-    router.get("/get_by_game_id/:game_id", reviewController.getReviewsByGameId);
-    router.get("/get_by_user_id/:id", reviewController.getReviewsByUserId);
-    router.get("/:user_id&game_id", reviewController.getReviewsByUserIdAndGameId);
+    router.get("/:id", getUserIfLogged, reviewController.getReviewById);
+    router.get("/get_by_game_id/:game_id", getUserIfLogged, reviewController.getReviewsByGameId);
+    router.get("/get_by_user_id/:id", getUserIfLogged, reviewController.getReviewsByUserId);
+    router.get("/:user_id&game_id", getUserIfLogged, reviewController.getReviewsByUserIdAndGameId);
     router.get("/my_reviews", authMiddleware, reviewController.getMyReviews);
     router.get("/my_review_for_game/:game_id", authMiddleware, reviewController.getMyReviewForAGame);
     router.put("/", authMiddleware, reviewController.updateReview);

@@ -43,6 +43,19 @@ export class AuthController extends AController {
         }
     };
 
+    /**
+     * Registers a new user account.
+     *
+     * This method hashes the user's password, creates a new user entry with default profile and banner pictures,
+     * and initializes default lists ("Like" and "Favorite") for the user. If the user already exists, a
+     * ValidationError is thrown. On success, returns a JSON response containing the user's pseudo, authentication
+     * token, refresh token, and profile picture ID.
+     *
+     * @param req - Express request object containing user registration data (pseudo, email, password).
+     * @param res - Express response object used to send the registration result.
+     * @param next - Express next function for error handling.
+     * @returns A Promise that resolves to a JSON response with authentication details or passes errors to the next middleware.
+     */
     public register = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const hashedPassword = await bcrypt.hash(req.body.password, 10);
@@ -54,7 +67,7 @@ export class AuthController extends AController {
                 is_admin: false
             } as UserEntry;
 
-            //choix aléatoire d'une image de profil et d'une bannière
+            // random profile and banner pictures
             user.banner_picture_id = randomInt(1, 5);
             user.profil_picture_id = randomInt(1, 5);
 
@@ -88,6 +101,19 @@ export class AuthController extends AController {
         }
     };
 
+    /**
+     * Handles the refresh token process for authentication.
+     *
+     * Expects a `refreshToken` in the request body, validates its presence,
+     * parses the token to extract user data, and responds with a new access token,
+     * the same refresh token, and user information.
+     *
+     * @param req - Express request object containing the refresh token in the body.
+     * @param res - Express response object used to send the new authentication data.
+     * @param next - Express next function for error handling.
+     *
+     * @throws {ValidationError} If the refresh token is not provided in the request body.
+     */
     public refreshToken = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const { refreshToken } = req.body;
