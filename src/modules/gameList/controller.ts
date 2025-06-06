@@ -92,7 +92,7 @@ export class GameListController extends AController {
                 };
             });
 
-           res.status(201).json(getResponse<MultipleGamesListsResponse>({
+           res.status(200).json(getResponse<MultipleGamesListsResponse>({
                success: true,
                data: gameslists
            }));
