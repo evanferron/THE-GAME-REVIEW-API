@@ -151,13 +151,11 @@ export class ReviewRepository extends ARepository<ReviewEntry> {
         );
 
         if ((check.rowCount ?? 0) > 0) {
-            console.log("User already liked this review, removing like.");
             await this.query(
                 `DELETE FROM reviews_likes WHERE review_id = $1 AND user_id = $2;`,
                 [reviewId, userId]
             );
         } else {
-            console.log("User has not liked this review, adding like.");
             await this.query(
                 `INSERT INTO reviews_likes (review_id, user_id) VALUES ($1, $2);`,
                 [reviewId, userId]

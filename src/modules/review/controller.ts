@@ -74,7 +74,6 @@ export class ReviewController extends AController {
                 )
                 return
             }
-            console.log(foundReviews);
 
             const reviews: ReviewResponse[] = foundReviews.map(review => ({
                 id: review.id,
