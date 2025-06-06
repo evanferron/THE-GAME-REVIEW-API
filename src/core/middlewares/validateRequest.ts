@@ -43,7 +43,7 @@ export const validateRequest = (schema: ZodSchema) => {
             });
             return;
         }
-        req.body = sanitizeObject(result.data);
+        req.body = sanitizeObject(result.data); // sanitize input data
         next();
     };
 };

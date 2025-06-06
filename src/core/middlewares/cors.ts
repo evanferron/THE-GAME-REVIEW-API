@@ -2,6 +2,17 @@ import { Request, Response, NextFunction } from "express";
 
 const allowedOrigins = [process.env.FRONTEND_URL, "http://localhost:5173"];
 
+/**
+ * Middleware to check the request's origin against a list of allowed origins and set appropriate CORS headers.
+ *
+ * - If the request's origin is allowed or not specified, sets CORS headers to allow the request.
+ * - Handles preflight OPTIONS requests by responding with status 200.
+ * - If the origin is not allowed, responds with a 403 Forbidden error.
+ *
+ * @param req - The Express request object.
+ * @param res - The Express response object.
+ * @param next - The next middleware function in the stack.
+ */
 export const checkOrigin = (req: Request, res: Response, next: NextFunction): void => {
     const origin = req.headers.origin;
 
