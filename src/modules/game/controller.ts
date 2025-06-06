@@ -5,8 +5,6 @@ import { UUID } from "crypto";
 
 
 export class GameController extends AController {
-    // TODO : Add the medium rating of all user on a game (average rating of igbd is not working)
-
 
     public getGameDetails = async (req: Request, res: Response, next: NextFunction) => {
         try {
@@ -68,6 +66,26 @@ export class GameController extends AController {
             const user_id = getUserFromRequest(req)?.userId as UUID;
 
             const games = await this.config.twitchService.getTopGames();
+            const response = games.map((game) => {
+                return {
+                    id: game.id,
+                    name: game.name,
+                    cover: game.cover.url,
+                    aggregated_rating: game.total_rating_count,
+                    involved_companies: game.involved_companies,
+                };
+            });
+            res.status(200).json(getResponse(response));
+        } catch (err) {
+            next(err);
+        }
+    }
+
+    public getGamesByIds = async (req: Request, res: Response, next: NextFunction) => {
+        try {
+            const ids = req.params.ids.split(",");
+            console.log("ids", ids);
+            const games = await this.config.twitchService.getGamesPreview(ids);
             const response = games.map((game) => {
                 return {
                     id: game.id,
