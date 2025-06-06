@@ -20,6 +20,7 @@ export * from "./middlewares/error";
 export * from "./middlewares/validateRequest";
 export * from "./middlewares/cors";
 export * from "./middlewares/rateLimit";
+export * from "./middlewares/getUserIfLogged";
 
 
 // utils

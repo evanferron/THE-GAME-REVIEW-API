@@ -11,7 +11,7 @@ export class UserController extends AController {
 
         try {
             const user = {
-                id: getUserFromRequest(req).userId,
+                id: getUserFromRequest(req)?.userId,
             } as UserEntry;
 
             const foundUser = await this.config.userRepository.findByColumn("id", user.id);
@@ -41,7 +41,7 @@ export class UserController extends AController {
 
         try {
             const user = {
-                id: getUserFromRequest(req).userId,
+                id: getUserFromRequest(req)?.userId,
                 pseudo: req.body.pseudo,
                 email: req.body.email,
                 password: req.body.password,
@@ -75,7 +75,7 @@ export class UserController extends AController {
 
         try {
             const user = {
-                id: getUserFromRequest(req).userId,
+                id: getUserFromRequest(req)?.userId,
                 pseudo: req.body.pseudo,
                 email: req.body.email,
             } as UserEntry;
@@ -106,7 +106,7 @@ export class UserController extends AController {
             const hashedPassword = await bcrypt.hash(req.body.password, 10);
 
             const user = {
-                id: getUserFromRequest(req).userId,
+                id: getUserFromRequest(req)?.userId,
                 password: hashedPassword,
             } as UserEntry;
 
@@ -136,7 +136,7 @@ export class UserController extends AController {
         try {
             console.log("User deleting");
             const user = {
-                id: getUserFromRequest(req).userId,
+                id: getUserFromRequest(req)?.userId,
                 deleted_at: new Date()
             } as UserEntry;
             console.log("1");

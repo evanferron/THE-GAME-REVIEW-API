@@ -1,8 +1,8 @@
-import { AuthenticatedRequest, UnauthorizedError } from '../';
+import { AuthenticatedRequest } from '../';
 
-export const getUserFromRequest = (req: AuthenticatedRequest): { userId: string, isAdmin: Boolean } => {
+export const getUserFromRequest = (req: AuthenticatedRequest): { userId: string, isAdmin: boolean } | null => {
     if (!req.user) {
-        throw new UnauthorizedError("Unauthorized: Missing user info in request");
+        return null
     }
 
     return req.user;

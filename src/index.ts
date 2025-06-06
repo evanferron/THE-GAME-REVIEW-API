@@ -1,3 +1,4 @@
+import 'module-alias/register';
 import express, { Express } from "express";
 import dotenv from "dotenv";
 import { createAppRoutes } from "./routes";
@@ -22,12 +23,12 @@ app.use(express.json());
 
 // check the origin of the request
 app.use(checkOrigin);
+
 // limit the number of requests by ip
 app.use(limiter)
 
 app.use("/api", createAppRoutes());
 
-// ! The error handler must be the last middleware
 app.use(errorHandler);
 
 app.listen(port, () => {

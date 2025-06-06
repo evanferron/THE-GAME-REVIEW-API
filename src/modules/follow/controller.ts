@@ -9,7 +9,7 @@ export class FollowController extends AController {
     public getFollowersById = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const user = {
-                follower_id: getUserFromRequest(req).userId,
+                follower_id: getUserFromRequest(req)?.userId,
             } as FollowEntry;
 
             const foundFollower = await this.config.followRepository.getFollowers(user.follower_id);
@@ -21,12 +21,12 @@ export class FollowController extends AController {
             const followers: FollowerUserResponse[] = foundFollower.map(follow => ({
                 followerId: user.follower_id,
                 following: {
-                    id : follow.id,
+                    id: follow.id,
                     pseudo: follow.pseudo,
                     email: follow.email,
                     isAdmin: follow.is_admin,
                     createdAt: new Date(follow.created_at).toISOString(),
-                    deletedAt:new Date(follow.deleted_at).toISOString(),
+                    deletedAt: new Date(follow.deleted_at).toISOString(),
                     profilePictureId: follow.profil_picture_id,
                     bannerId: follow.banner_picture_id,
                 }
@@ -45,7 +45,7 @@ export class FollowController extends AController {
     public getFollowingById = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const user = {
-                follower_id: getUserFromRequest(req).userId,
+                follower_id: getUserFromRequest(req)?.userId,
             } as FollowEntry;
 
             const foundFollower = await this.config.followRepository.getFollowing(user.follower_id);
@@ -56,13 +56,13 @@ export class FollowController extends AController {
 
             const followers: FollowingUserResponse[] = foundFollower.map(follow => ({
                 followingId: user.follower_id,
-                follower : {
-                    id : follow.id,
+                follower: {
+                    id: follow.id,
                     pseudo: follow.pseudo,
                     email: follow.email,
                     isAdmin: follow.is_admin,
                     createdAt: new Date(follow.created_at).toISOString(),
-                    deletedAt:new Date(follow.deleted_at).toISOString(),
+                    deletedAt: new Date(follow.deleted_at).toISOString(),
                     profilePictureId: follow.profil_picture_id,
                     bannerId: follow.banner_picture_id,
                 }
@@ -82,7 +82,7 @@ export class FollowController extends AController {
         try {
             const follow = {
                 followed_id: req.body.followedId,
-                follower_id: getUserFromRequest(req).userId,
+                follower_id: getUserFromRequest(req)?.userId,
             } as FollowEntry;
 
             const createdFollow = await this.config.followRepository.create(follow);
@@ -100,7 +100,7 @@ export class FollowController extends AController {
         try {
             const follow = {
                 followed_id: req.body.followedId,
-                follower_id: getUserFromRequest(req).userId,
+                follower_id: getUserFromRequest(req)?.userId,
             } as FollowEntry;
 
             const deletedData = await this.config.followRepository.unfollow(follow.follower_id, follow.followed_id);

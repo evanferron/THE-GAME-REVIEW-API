@@ -9,7 +9,7 @@ export class GameListController extends AController {
 
     public getAllGamesLists = async (req: Request, res: Response, next: NextFunction) => {
         try {
-           
+
             const foundGamesLists = await this.config.gameListRepository.getAll();
 
             if (foundGamesLists.length === 0) {
@@ -34,40 +34,40 @@ export class GameListController extends AController {
 
     public getGamesListsByListId = async (req: Request, res: Response, next: NextFunction) => {
         try {
-           const gameList = {
-               list_id: req.body.list_id,
-           } as GameListEntry;
+            const gameList = {
+                list_id: req.body.list_id,
+            } as GameListEntry;
 
-           const foundLists = await this.config.gameListRepository.GetGamesListsByListId(gameList.list_id);
+            const foundLists = await this.config.gameListRepository.GetGamesListsByListId(gameList.list_id);
 
-           const gameslists: GameListResponse[] = foundLists.map(gameList => ({
+            const gameslists: GameListResponse[] = foundLists.map(gameList => ({
                 gameId: gameList.game_id,
                 listId: gameList.list_id,
                 addedAt: new Date(gameList.added_at).toISOString(),
-           }));
+            }));
 
-           res.status(201).json(getResponse<MultipleGamesListsResponse>({
-               success: true,
-               data: gameslists
-           }));
+            res.status(201).json(getResponse<MultipleGamesListsResponse>({
+                success: true,
+                data: gameslists
+            }));
 
-       } catch (err) {
-           next(err);
-       } 
-   }
+        } catch (err) {
+            next(err);
+        }
+    }
 
-   public getGamesListsByName = async (req: Request, res: Response, next: NextFunction) => {
+    public getGamesListsByName = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const gameList = {
                 name: req.body.name,
-                user_id: getUserFromRequest(req).userId,
+                user_id: getUserFromRequest(req)?.userId,
             } as any;
 
             const foundLists = await this.config.gameListRepository.GetGamesListByName(gameList.name, gameList.user_id);
-            
+
             // Extrait les game_id sous forme de number
             const list_ids = foundLists.map(gameList => Number(gameList.game_id));
-            
+
             if (list_ids.length === 0) {
                 throw new ValidationError("No games found for the specified list name");
             }
@@ -92,15 +92,15 @@ export class GameListController extends AController {
                 };
             });
 
-           res.status(200).json(getResponse<MultipleGamesListsResponse>({
-               success: true,
-               data: gameslists
-           }));
+            res.status(200).json(getResponse<MultipleGamesListsResponse>({
+                success: true,
+                data: gameslists
+            }));
 
-       } catch (err) {
-           next(err);
-       } 
-   }
+        } catch (err) {
+            next(err);
+        }
+    }
 
     public createGameList = async (req: Request, res: Response, next: NextFunction) => {
         try {
@@ -140,8 +140,8 @@ export class GameListController extends AController {
                 listId: deletedGameList[0].list_id,
                 addedAt: new Date(deletedGameList[0].added_at).toISOString(),
             }));
-       } catch (err) {
+        } catch (err) {
             next(err);
-       }
-   }
+        }
+    }
 }

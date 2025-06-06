@@ -1,6 +1,7 @@
-import { AController, parseToken, getResponse, ValidationError } from "../../core";
+import { AController, parseToken, getResponse, ValidationError, getUserFromRequest } from "../../core";
 import { NextFunction, Request, Response } from "express";
 import { GameDetailsResponse } from "./response";
+import { UUID } from "crypto";
 
 
 export class GameController extends AController {
@@ -64,6 +65,8 @@ export class GameController extends AController {
 
     public getTendanceGames = async (req: Request, res: Response, next: NextFunction) => {
         try {
+            const user_id = getUserFromRequest(req)?.userId as UUID;
+
             const games = await this.config.twitchService.getTopGames();
             const response = games.map((game) => {
                 return {

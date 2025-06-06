@@ -9,8 +9,9 @@ export class ReviewController extends AController {
 
     public getAllReviews = async (req: Request, res: Response, next: NextFunction) => {
         try {
+            const user_id = getUserFromRequest(req)?.userId as UUID;
 
-            const foundReviews = await this.config.reviewRepository.getAllReview() as any[];
+            const foundReviews = await this.config.reviewRepository.getAllReview(user_id) as any[];
 
             if (foundReviews.length === 0) {
                 throw new ValidationError("No follow found");
@@ -39,8 +40,9 @@ export class ReviewController extends AController {
                 likes: review.like_count,
                 createdAt: new Date(review.created_at).toISOString(),
                 updatedAt: new Date(review.updated_at).toISOString(),
+                has_liked: review.has_liked ?? null,
             }));
-
+            await this.getReviewsByUserIdAndGameId(req, res, next);
             res.status(200).json(getResponse<MultipleReviewsResponse>({
                 success: true,
                 data: reviews
@@ -57,8 +59,9 @@ export class ReviewController extends AController {
             const review = {
                 id: req.params.id,
             } as ReviewEntry;
+            const user_id = getUserFromRequest(req)?.userId as UUID;
 
-            const foundReviews = await this.config.reviewRepository.getReviewsById(review.id) as any[];
+            const foundReviews = await this.config.reviewRepository.getReviewsById(review.id, user_id) as any[];
 
 
             if (foundReviews.length === 0) {
@@ -71,7 +74,7 @@ export class ReviewController extends AController {
                 )
                 return
             }
-
+            console.log(foundReviews);
 
             const reviews: ReviewResponse[] = foundReviews.map(review => ({
                 id: review.id,
@@ -84,6 +87,7 @@ export class ReviewController extends AController {
                 likes: review.like_count,
                 createdAt: new Date(review.created_at).toISOString(),
                 updatedAt: new Date(review.updated_at).toISOString(),
+                has_liked: review.has_liked ?? null,
             }));
 
             res.status(200).json(getResponse<SingleReviewResponse>({
@@ -102,9 +106,9 @@ export class ReviewController extends AController {
             const review = {
                 id: req.body.id,
             } as ReviewEntry;
-            const user_id = getUserFromRequest(req).userId as UUID;
+            const user_id = getUserFromRequest(req)?.userId as UUID;
 
-            this.config.reviewRepository.handleLikeReview(review.id, user_id);
+            await this.config.reviewRepository.handleLikeReview(review.id, user_id);
 
             res.status(201).json({
                 success: true,
@@ -123,12 +127,13 @@ export class ReviewController extends AController {
             if (!game_id || isNaN(Number(game_id))) {
                 throw new ValidationError('game_id is required');
             }
+            const user_id = getUserFromRequest(req)?.userId as UUID;
 
             const review = {
                 game_id: req.params.game_id as unknown as bigint,
             } as ReviewEntry;
 
-            const foundReviews = await this.config.reviewRepository.getReviewsByGame(review.game_id) as any[];
+            const foundReviews = await this.config.reviewRepository.getReviewsByGame(review.game_id, user_id) as any[];
 
             if (foundReviews.length === 0) {
                 res.status(200).json(
@@ -152,6 +157,7 @@ export class ReviewController extends AController {
                 likes: review.like_count,
                 createdAt: new Date(review.created_at).toISOString(),
                 updatedAt: new Date(review.updated_at).toISOString(),
+                has_liked: review.has_liked ?? null,
             }));
 
             res.status(200).json(getResponse<MultipleReviewsResponse>({
@@ -166,15 +172,17 @@ export class ReviewController extends AController {
 
     public getReviewsByUserId = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            let user_id: UUID;
+            const logged_user_id = getUserFromRequest(req)?.userId as UUID;
+
+            let search_user_id: UUID;
 
             if (!req.params.id || req.params.id === "") {
                 throw new ValidationError('user_id is required');
             } else {
-                user_id = req.params.id as UUID
+                search_user_id = req.params.id as UUID
             }
 
-            const foundReviews = await this.config.reviewRepository.getReviewsByUser(user_id) as any[];
+            const foundReviews = await this.config.reviewRepository.getReviewsByUser(search_user_id, logged_user_id) as any[];
 
 
             if (foundReviews.length === 0) {
@@ -199,6 +207,7 @@ export class ReviewController extends AController {
                 likes: review.like_count,
                 createdAt: new Date(review.created_at).toISOString(),
                 updatedAt: new Date(review.updated_at).toISOString(),
+                has_liked: review.has_liked ?? null,
             }));
 
             res.status(201).json(getResponse<MultipleReviewsResponse>({
@@ -213,9 +222,9 @@ export class ReviewController extends AController {
 
     public getReviewsByPopularity = async (req: Request, res: Response, next: NextFunction) => {
         try {
+            const user_id = getUserFromRequest(req)?.userId as UUID;
 
-            const foundReviews = await this.config.reviewRepository.getPopularReviews() as any[];
-
+            const foundReviews = await this.config.reviewRepository.getPopularReviews(user_id) as any[];
 
             if (foundReviews.length === 0) {
                 res.status(200).json(
@@ -239,6 +248,7 @@ export class ReviewController extends AController {
                 likes: review.like_count,
                 createdAt: new Date(review.created_at).toISOString(),
                 updatedAt: new Date(review.updated_at).toISOString(),
+                has_liked: review.has_liked ?? null,
             }));
 
             res.status(200).json(getResponse<MultipleReviewsResponse>({
@@ -253,7 +263,7 @@ export class ReviewController extends AController {
 
     public getMyReviews = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const user_id = getUserFromRequest(req).userId as UUID;
+            const user_id = getUserFromRequest(req)?.userId as UUID;
 
             req.params.id = user_id;
 
@@ -282,7 +292,10 @@ export class ReviewController extends AController {
                 game_id = Number(req.params.game_id)
             }
 
-            const foundReviews = await this.config.reviewRepository.getReviewsByUserAndGame(user_id, game_id) as any[];
+            const looged_user_id = getUserFromRequest(req)?.userId as UUID;
+
+
+            const foundReviews = await this.config.reviewRepository.getReviewsByUserAndGame(user_id, game_id, looged_user_id) as any[];
 
             if (foundReviews.length === 0) {
                 res.status(200).json(
@@ -306,6 +319,7 @@ export class ReviewController extends AController {
                 likes: foundReviews[0].like_count,
                 createdAt: new Date(foundReviews[0].created_at).toISOString(),
                 updatedAt: new Date(foundReviews[0].updated_at).toISOString(),
+                has_liked: foundReviews[0].has_liked ?? null,
             };
 
             res.status(200).json(getResponse<SingleReviewResponse>({
@@ -323,7 +337,7 @@ export class ReviewController extends AController {
 
     public getMyReviewForAGame = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const user_id = getUserFromRequest(req).userId as UUID;
+            const user_id = getUserFromRequest(req)?.userId as UUID;
 
             req.params.user_id = user_id;
 
@@ -339,7 +353,7 @@ export class ReviewController extends AController {
         try {
             const review = {
                 game_id: req.body.game_id,
-                user_id: getUserFromRequest(req).userId,
+                user_id: getUserFromRequest(req)?.userId,
                 rating: req.body.rating,
                 review: req.body.review,
                 created_at: new Date(),
@@ -359,6 +373,7 @@ export class ReviewController extends AController {
                 likes: 0,
                 createdAt: new Date(createdReview.created_at).toISOString(),
                 updatedAt: new Date(createdReview.updated_at).toISOString(),
+                has_liked: false,
             }));
         } catch (err) {
             next(err);
@@ -390,6 +405,7 @@ export class ReviewController extends AController {
                 likes: 0,
                 createdAt: new Date(updatedReview.created_at).toISOString(),
                 updatedAt: new Date(updatedReview.updated_at).toISOString(),
+                has_liked: false,
             }));
         } catch (err) {
             next(err);
@@ -422,6 +438,7 @@ export class ReviewController extends AController {
                 likes: 0,
                 createdAt: new Date(deletedReview[0].created_at).toISOString(),
                 updatedAt: new Date(deletedReview[0].updated_at).toISOString(),
+                has_liked: false,
             }));
         } catch (err) {
             next(err);
