@@ -37,4 +37,22 @@ export class GameListRepository extends ARepository<GameListEntry> {
         return result.rows;
     }
 
+    /**
+    * Method that will delete all the entries corresponding to the ids
+    * 
+    * @param id id to delete
+    * @returns entrie that are deleted
+    */
+    public async GetGamesListByName(listName: string, userId: UUID): Promise<GameListEntry[]> {
+
+        const result = await this.query<GameListEntry>(
+            `SELECT gl.game_id FROM games_lists gl
+                JOIN lists l ON gl.list_id = l.id
+                WHERE l.name = $1 AND l.user_id = $2;`,
+            [listName, userId]
+        );
+
+        return result.rows;
+    }
+
 }
