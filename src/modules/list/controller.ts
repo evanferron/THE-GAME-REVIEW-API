@@ -1,4 +1,4 @@
-import { Config, getUserFromRequest, AController, ValidationError, getResponse } from "../../core";
+import { getUserFromRequest, AController, ValidationError, getResponse } from "../../core";
 import { NextFunction, Request, Response } from "express";
 import { ListEntry } from "../../database/models/list";
 import { MultipleListsResponse, ListResponse, SingleListResponse } from "./response";
@@ -8,7 +8,7 @@ export class ListController extends AController {
 
     public getAllLists = async (req: Request, res: Response, next: NextFunction) => {
         try {
-           
+
             const foundLists = await this.config.listRepository.getAll();
 
             if (foundLists.length === 0) {
@@ -35,35 +35,35 @@ export class ListController extends AController {
 
     public getListById = async (req: Request, res: Response, next: NextFunction) => {
         try {
-           const list = {
-               id: req.body.id,
-           } as ListEntry;
+            const list = {
+                id: req.body.id,
+            } as ListEntry;
 
-           const foundLists = await this.config.listRepository.findByColumn("id", list.id);
+            const foundLists = await this.config.listRepository.findByColumn("id", list.id);
 
-           const lists: ListResponse[] = foundLists.map(list => ({
+            const lists: ListResponse[] = foundLists.map(list => ({
                 id: list.id,
                 userId: list.user_id,
                 name: list.name,
                 description: list.description,
                 isPrivate: list.is_private
-           }));
+            }));
 
-           res.status(201).json(getResponse<SingleListResponse>({
-               success: true,
-               data: lists[0]
-           }));
+            res.status(201).json(getResponse<SingleListResponse>({
+                success: true,
+                data: lists[0]
+            }));
 
-       } catch (err) {
-           next(err);
-       } 
-   }
+        } catch (err) {
+            next(err);
+        }
+    }
 
-   public getListsByUserId = async (req: Request, res: Response, next: NextFunction) => {
+    public getListsByUserId = async (req: Request, res: Response, next: NextFunction) => {
         try {
-        
+
             const list = {
-                user_id: getUserFromRequest(req).userId,
+                user_id: getUserFromRequest(req)?.userId,
             } as ListEntry;
 
             const foundLists = await this.config.listRepository.getListsByUser(list.user_id);
@@ -89,12 +89,12 @@ export class ListController extends AController {
     public createList = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const list = {
-                user_id: getUserFromRequest(req).userId,
+                user_id: getUserFromRequest(req)?.userId,
                 name: req.body.name,
                 description: req.body.description,
                 is_private: req.body.isrivate
             } as ListEntry;
-            
+
             const createdList = await this.config.listRepository.create(list);
 
             res.status(201).json(getResponse<ListResponse>({
@@ -154,8 +154,8 @@ export class ListController extends AController {
                 description: deletedList[0].description,
                 isPrivate: deletedList[0].is_private
             }));
-       } catch (err) {
+        } catch (err) {
             next(err);
-       }
-   }
+        }
+    }
 }

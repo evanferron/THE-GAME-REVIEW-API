@@ -1,7 +1,7 @@
 import { AuthenticatedRequest } from "@base/IAuthentificateRequest";
 import { env } from "process";
 import { Response, NextFunction } from "express";
-import { parseToken } from "@utils/jwt";
+import { parseToken } from "../";
 
 /**
  * Permet de récupérer l'utilisateur si il est connecté et de le mettre dans la requête

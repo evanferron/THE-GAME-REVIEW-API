@@ -11,6 +11,7 @@ export interface ReviewResponse extends IResponse {
     likes: number;
     createdAt: string;
     updatedAt: string;
+    has_liked: boolean | null;
 }
 
 export type SingleReviewResponse = SuccessResponse<ReviewResponse>;

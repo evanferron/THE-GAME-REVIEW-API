@@ -1,7 +1,6 @@
 import { Router } from "express";
-import { authMiddleware } from "../../core";
+import { authMiddleware, getUserIfLogged } from "../../core";
 import { ReviewController } from "./controller";
-import { getUserIfLogged } from "@middlewares/getUserIfLogged";
 
 export function createReviewRoutes(): Router {
     const router = Router();

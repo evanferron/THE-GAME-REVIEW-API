@@ -12,6 +12,7 @@
     "strict": true,
     "skipLibCheck": true,
     "paths": {
+      "core/*": ["core/*"],
       "@base/*": ["core/base/*"],
       "@config/*": ["core/config/*"],
       "@errors/*": ["core/errors/*"],

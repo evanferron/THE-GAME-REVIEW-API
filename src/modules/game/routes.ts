@@ -1,8 +1,7 @@
 import { Router } from "express";
 import { GameController } from "./controller";
-import { validateRequest } from "../../core";
 import { GetGamesPreview } from "./request";
-import { getUserIfLogged } from "@middlewares/getUserIfLogged";
+import { validateRequest, getUserIfLogged } from "../../core";
 
 export function createGameRoutes(): Router {
     const router = Router();

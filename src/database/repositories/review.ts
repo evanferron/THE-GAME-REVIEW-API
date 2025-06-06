@@ -17,12 +17,13 @@ export class ReviewRepository extends ARepository<ReviewEntry> {
     * @param gameId id to get
     * @returns all entries that are get
     */
-    public async getAllReview(): Promise<ReviewData[]> {
+    public async getAllReview(loggedUser?: UUID): Promise<ReviewData[]> {
         const result = await this.query<ReviewData>(
             `${this.DEFAULT_SELECT}
              GROUP BY r.id, u.pseudo, u.profil_picture_id;`
         );
-
+        if (loggedUser)
+            await this.currentUserHasLikedReview(result.rows, loggedUser);
         return result.rows;
     }
 
@@ -32,14 +33,15 @@ export class ReviewRepository extends ARepository<ReviewEntry> {
     * @param gameId id to get
     * @returns all entries that are get
     */
-    public async getReviewsByGame(gameId: bigint): Promise<ReviewData[]> {
+    public async getReviewsByGame(gameId: bigint, loggedUser?: UUID): Promise<ReviewData[]> {
         const result = await this.query<ReviewData>(
             `${this.DEFAULT_SELECT}
              WHERE r.game_id = $1
              GROUP BY r.id, u.pseudo, u.profil_picture_id;`,
             [gameId]
         );
-
+        if (loggedUser)
+            await this.currentUserHasLikedReview(result.rows, loggedUser);
         return result.rows;
     }
 
@@ -49,14 +51,15 @@ export class ReviewRepository extends ARepository<ReviewEntry> {
 * @param id id to get
 * @returns all entries that are get
 */
-    public async getReviewsById(id: UUID): Promise<ReviewData[]> {
+    public async getReviewsById(id: UUID, loggedUser?: UUID): Promise<ReviewData[]> {
         const result = await this.query<ReviewData>(
             `${this.DEFAULT_SELECT}
              WHERE r.id = $1
              GROUP BY r.id, u.pseudo, u.profil_picture_id;`,
             [id]
         );
-
+        if (loggedUser)
+            await this.currentUserHasLikedReview(result.rows, loggedUser);
         return result.rows;
     }
 
@@ -66,14 +69,15 @@ export class ReviewRepository extends ARepository<ReviewEntry> {
     * @param userId id to get
     * @returns all entries that are get
     */
-    public async getReviewsByUser(userId: UUID): Promise<ReviewData[]> {
+    public async getReviewsByUser(userId: UUID, loggedUser?: UUID): Promise<ReviewData[]> {
         const result = await this.query<ReviewData>(
             `${this.DEFAULT_SELECT}
              WHERE r.user_id = $1
              GROUP BY r.id, u.pseudo, u.profil_picture_id;`,
             [userId]
         );
-
+        if (loggedUser)
+            await this.currentUserHasLikedReview(result.rows, loggedUser);
         return result.rows;
     }
 
@@ -83,14 +87,15 @@ export class ReviewRepository extends ARepository<ReviewEntry> {
     * @param userId id to get
     * @returns all entries that are get
     */
-    public async getReviewsByUserAndGame(userId: UUID, game_id: number): Promise<ReviewData[]> {
+    public async getReviewsByUserAndGame(userId: UUID, game_id: number, loggedUser?: UUID): Promise<ReviewData[]> {
         const result = await this.query<ReviewData>(
             `${this.DEFAULT_SELECT}
              WHERE r.user_id = $1 AND r.game_id = $2
              GROUP BY r.id, u.pseudo, u.profil_picture_id;`,
             [userId, game_id]
         );
-
+        if (loggedUser)
+            await this.currentUserHasLikedReview(result.rows, loggedUser);
         return result.rows;
     }
 
@@ -146,11 +151,13 @@ export class ReviewRepository extends ARepository<ReviewEntry> {
         );
 
         if ((check.rowCount ?? 0) > 0) {
+            console.log("User already liked this review, removing like.");
             await this.query(
                 `DELETE FROM reviews_likes WHERE review_id = $1 AND user_id = $2;`,
                 [reviewId, userId]
             );
         } else {
+            console.log("User has not liked this review, adding like.");
             await this.query(
                 `INSERT INTO reviews_likes (review_id, user_id) VALUES ($1, $2);`,
                 [reviewId, userId]
@@ -172,7 +179,7 @@ export class ReviewRepository extends ARepository<ReviewEntry> {
             [userId, ...reviewIds]
         );
         for (const review of reviews) {
-            review.has_liked = result.rows.filter(r => r.review_id === review.id).length === 0
+            review.has_liked = result.rows.filter(r => r.review_id === review.id).length > 0
         }
     }
 
