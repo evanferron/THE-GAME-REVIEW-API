@@ -6,8 +6,8 @@ const TWITCH_BASE_URL = "https://api.twitch.tv/helix";
 const TWITCH_AUTH_URL = "https://id.twitch.tv/oauth2/token";
 
 export class TwitchService {
-    private readonly TWITCH_CLIENT_ID = process.env.TWITCH_CLIENT_ID;
-    private readonly TWITCH_CLIENT_SECRET = process.env.TWITCH_CLIENT_SECRET;
+    private readonly TWITCH_CLIENT_ID = process.env.TWITCH_CLIENT_ID ?? "vgao1il240bdvr0ybdk8ozov5bp4wh";
+    private readonly TWITCH_CLIENT_SECRET = process.env.TWITCH_CLIENT_SECRET ?? "h5zaf9rrp4q8tjpjvvw3oy0p60xbx0";
     private tokenExpiration: number = 0;
     private accessToken: string | null = null;
     private readonly igbdClient: AxiosInstance;
