@@ -72,6 +72,7 @@ export class GameListController extends AController {
                     success: true,
                     data: []
                 }));
+                return;
             }
             // Récupérer les infos des jeux
             const games = await this.config.twitchService.getGamesPreview(list_ids);
