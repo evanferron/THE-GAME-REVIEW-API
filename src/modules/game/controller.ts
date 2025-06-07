@@ -84,7 +84,6 @@ export class GameController extends AController {
     public getGamesByIds = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const ids = req.params.ids.split(",");
-            console.log("ids", ids);
             const games = await this.config.twitchService.getGamesPreview(ids);
             const response = games.map((game) => {
                 return {

@@ -124,7 +124,6 @@ export class UserController extends AController {
                 profilePictureId: createdUser.profil_picture_id,
                 bannerId: createdUser.banner_picture_id,
             }));
-            console.log("User password updated");
         } catch (err) {
             next(err);
         }
@@ -134,18 +133,14 @@ export class UserController extends AController {
     public deleteUser = async (req: Request, res: Response, next: NextFunction) => {
 
         try {
-            console.log("User deleting");
             const user = {
                 id: getUserFromRequest(req)?.userId,
                 deleted_at: new Date()
             } as UserEntry;
-            console.log("1");
             const deletedUser = await this.config.userRepository.deleteUser(user.id, user.deleted_at);
-            console.log("1.5", deletedUser);
             if (deletedUser.length === 0) {
                 throw new ValidationError("No User found");
             }
-            console.log("User deleted");
             res.status(200).json(getResponse<UserResponse>({
                 id: deletedUser[0].id,
                 pseudo: deletedUser[0].pseudo,
@@ -157,7 +152,6 @@ export class UserController extends AController {
                 bannerId: deletedUser[0].banner_picture_id,
             }));
         } catch (err) {
-            console.log("2");
             next(err);
         }
     }

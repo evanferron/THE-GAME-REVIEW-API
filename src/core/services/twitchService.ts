@@ -205,6 +205,7 @@ export class TwitchService {
             fields id, name, cover.url, aggregated_rating,total_rating_count, involved_companies.company.name;
             sort total_rating_count	 desc;
             where id = (${gameIdentifiers.join(",")});
+            limit ${gameIdentifiers.length};
         `;
 
             const games = await this.fetchIGDBData<{
