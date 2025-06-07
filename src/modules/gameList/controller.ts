@@ -64,12 +64,14 @@ export class GameListController extends AController {
             } as any;
 
             const foundLists = await this.config.gameListRepository.GetGamesListByName(gameList.name, gameList.user_id);
-
             // Extrait les game_id sous forme de number
             const list_ids = foundLists.map(gameList => Number(gameList.game_id));
 
             if (list_ids.length === 0) {
-                throw new ValidationError("No games found for the specified list name");
+                res.status(200).json(getResponse<MultipleGamesListsResponse>({
+                    success: true,
+                    data: []
+                }));
             }
             // Récupérer les infos des jeux
             const games = await this.config.twitchService.getGamesPreview(list_ids);
