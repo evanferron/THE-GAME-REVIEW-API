@@ -151,15 +151,15 @@ export class TwitchService {
     public async getTopGames(limit: number = 10) {
         try {
             const query = `
-            fields id, name, cover.url, total_rating_count, involved_companies.company.name	;
-            sort total_rating_count	 desc;
+            fields id, name, cover.url, aggregated_rating, total_rating_count, involved_companies.company.name	;
+            sort total_rating_count desc;
             limit ${limit};
         `;
             const games = await this.fetchIGDBData<{
                 id: number;
                 name: string;
                 cover: { url: string };
-                total_rating_count: number;
+                aggregated_rating: number;
                 involved_companies: { company: { name: string } }[];
             }[]>("/games", query);
             for (const game of games) {

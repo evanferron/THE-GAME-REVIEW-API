@@ -71,7 +71,7 @@ export class GameController extends AController {
                     id: game.id,
                     name: game.name,
                     cover: game.cover.url,
-                    aggregated_rating: game.total_rating_count,
+                    aggregated_rating: game.aggregated_rating,
                     involved_companies: game.involved_companies,
                 };
             });
@@ -90,7 +90,7 @@ export class GameController extends AController {
                     id: game.id,
                     name: game.name,
                     cover: game.cover.url,
-                    aggregated_rating: game.total_rating_count,
+                    aggregated_rating: game.aggregated_rating,
                     involved_companies: game.involved_companies,
                 };
             });
