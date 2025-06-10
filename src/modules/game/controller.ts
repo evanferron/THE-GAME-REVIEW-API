@@ -89,7 +89,7 @@ export class GameController extends AController {
                 return {
                     id: game.id,
                     name: game.name,
-                    cover: game.cover.url,
+                    cover: game.cover?.url,
                     aggregated_rating: game.aggregated_rating,
                     involved_companies: game.involved_companies,
                 };
