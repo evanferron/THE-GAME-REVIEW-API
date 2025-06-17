@@ -105,8 +105,8 @@ describe('GameController', () => {
     describe('getGamesByIds', () => {
         it('should return games by ids', async () => {
             mockGetGamesPreview.mockResolvedValueOnce([
-                { id: 1, name: 'Game1', cover: { url: 'c1.jpg' }, total_rating_count: 80, involved_companies: ['Comp1'] },
-                { id: 2, name: 'Game2', cover: { url: 'c2.jpg' }, total_rating_count: 70, involved_companies: ['Comp2'] },
+                { id: 1, name: 'Game1', cover: { url: 'c1.jpg' }, aggregated_rating: 80, involved_companies: ['Comp1'] },
+                { id: 2, name: 'Game2', cover: { url: 'c2.jpg' }, aggregated_rating: 70, involved_companies: ['Comp2'] },
             ]);
             const res = await request(app).get('/game/preview/1,2');
             console.log('DEBUG getGamesByIds', res.body);
@@ -121,8 +121,8 @@ describe('GameController', () => {
     describe('getTendanceGames', () => {
         it('should return trending games', async () => {
             mockGetTopGames.mockResolvedValueOnce([
-                { id: 1, name: 'Trend1', cover: { url: 't1.jpg' }, total_rating_count: 100, involved_companies: ['Comp1'] },
-                { id: 2, name: 'Trend2', cover: { url: 't2.jpg' }, total_rating_count: 200, involved_companies: ['Comp2'] },
+                { id: 1, name: 'Trend1', cover: { url: 't1.jpg' }, aggregated_rating: 100, involved_companies: ['Comp1'] },
+                { id: 2, name: 'Trend2', cover: { url: 't2.jpg' }, aggregated_rating: 200, involved_companies: ['Comp2'] },
             ]);
             const res = await request(app).get('/game/top');
             console.log('DEBUG getTendanceGames', res.body);
