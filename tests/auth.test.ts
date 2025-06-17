@@ -82,9 +82,7 @@ describe('Auth Module', () => {
             expect(res.status).toBe(400);
         });
         it('should return 201 for valid registration', async () => {
-            // Simulez ici la logique de création d’utilisateur selon votre implémentation
-            // Par exemple, mockez la méthode create de votre repository
-            // Ajoutez le test ici si la logique est implémentée
+            //TODO
         });
     });
 
@@ -99,6 +97,5 @@ describe('Auth Module', () => {
                 .send({});
             expect(res.status).toBe(400);
         });
-        // Add more tests for refresh (success, invalid token, etc.)
     });
 });
