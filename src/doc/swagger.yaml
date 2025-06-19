@@ -1,0 +1,848 @@
+openapi: 3.0.0
+info:
+  title: THE-GAME-REVIEW-API
+  version: 1.0.0
+  description: API pour gérer les utilisateurs, les jeux, les critiques, les listes, les suivis et l'authentification.
+
+servers:
+  - url: http://localhost:3000/api
+
+tags:
+  - name: Auth
+    description: Routes pour l'authentification
+  - name: User
+    description: Routes pour la gestion des utilisateurs
+  - name: Review
+    description: Routes pour la gestion des critiques
+  - name: Follow
+    description: Routes pour la gestion des abonnements
+  - name: List
+    description: Routes pour la gestion des listes
+  - name: GameList
+    description: Routes pour la gestion des associations jeux-listes
+  - name: Game
+    description: Routes pour la gestion des jeux
+
+paths:
+  /auth/login:
+    post:
+      tags: [Auth]
+      summary: Connexion utilisateur
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginUserRequest"
+      responses:
+        "200":
+          description: Connexion réussie
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "401":
+          description: Identifiants invalides
+
+  /auth/register:
+    post:
+      tags: [Auth]
+      summary: Inscription utilisateur
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterUserRequest"
+      responses:
+        "201":
+          description: Utilisateur créé
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "400":
+          description: Erreur de validation
+
+  /auth/refresh:
+    post:
+      tags: [Auth]
+      summary: Rafraîchir le token d'accès
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RefreshTokenRequest"
+      responses:
+        "201":
+          description: Token rafraîchi
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "400":
+          description: Token manquant ou invalide
+
+  /user:
+    get:
+      tags: [User]
+      summary: Récupérer l'utilisateur connecté
+      security: [{ bearerAuth: [] }]
+      responses:
+        "200":
+          description: Utilisateur trouvé
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserResponse"
+    put:
+      tags: [User]
+      summary: Mettre à jour l'utilisateur
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserUpdateRequest"
+      responses:
+        "201":
+          description: Utilisateur mis à jour
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserResponse"
+    delete:
+      tags: [User]
+      summary: Supprimer l'utilisateur connecté
+      security: [{ bearerAuth: [] }]
+      responses:
+        "200":
+          description: Utilisateur supprimé
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserResponse"
+
+  /user/info:
+    put:
+      tags: [User]
+      summary: Mettre à jour pseudo/email
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserUpdateInfoRequest"
+      responses:
+        "201":
+          description: Utilisateur mis à jour
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserResponse"
+
+  /user/password:
+    put:
+      tags: [User]
+      summary: Mettre à jour le mot de passe
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UserUpdatePasswordRequest"
+      responses:
+        "201":
+          description: Mot de passe mis à jour
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserResponse"
+
+  /review:
+    get:
+      tags: [Review]
+      summary: Récupérer toutes les critiques
+      responses:
+        "200":
+          description: Liste des critiques
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MultipleReviewsResponse"
+    post:
+      tags: [Review]
+      summary: Créer une critique
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateReviewRequest"
+      responses:
+        "201":
+          description: Critique créée
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReviewResponse"
+
+  /review/{id}:
+    get:
+      tags: [Review]
+      summary: Récupérer une critique par ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Critique trouvée
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReviewResponse"
+
+  /review/like:
+    post:
+      tags: [Review]
+      summary: Liker ou unliker une critique
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id: { type: string }
+      responses:
+        "201":
+          description: Like traité
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success: { type: boolean }
+                  message: { type: string }
+
+  /review/get_by_game_id/{game_id}:
+    get:
+      tags: [Review]
+      summary: Récupérer les critiques d'un jeu
+      parameters:
+        - name: game_id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Liste des critiques du jeu
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MultipleReviewsResponse"
+
+  /review/get_by_user_id/{id}:
+    get:
+      tags: [Review]
+      summary: Récupérer les critiques d'un utilisateur
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "201":
+          description: Liste des critiques de l'utilisateur
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MultipleReviewsResponse"
+
+  /review/top:
+    get:
+      tags: [Review]
+      summary: Récupérer les critiques les plus populaires
+      responses:
+        "200":
+          description: Liste des critiques populaires
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MultipleReviewsResponse"
+
+  /review/my_reviews:
+    get:
+      tags: [Review]
+      summary: Récupérer mes critiques
+      security: [{ bearerAuth: [] }]
+      responses:
+        "200":
+          description: Liste de mes critiques
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MultipleReviewsResponse"
+
+  /review/my_review_for_game/{game_id}:
+    get:
+      tags: [Review]
+      summary: Récupérer ma critique pour un jeu
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: game_id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Ma critique pour ce jeu
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReviewResponse"
+
+  /follow:
+    post:
+      tags: [Follow]
+      summary: Suivre un utilisateur
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateFollowRequest"
+      responses:
+        "201":
+          description: Suivi créé
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FollowResponse"
+    delete:
+      tags: [Follow]
+      summary: Se désabonner d'un utilisateur
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateFollowRequest"
+      responses:
+        "200":
+          description: Suivi supprimé
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FollowResponse"
+
+  /follow/me/followers:
+    get:
+      tags: [Follow]
+      summary: Récupérer mes abonnés
+      security: [{ bearerAuth: [] }]
+      responses:
+        "201":
+          description: Liste des abonnés
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MultipleFollowerUserResponse"
+
+  /follow/me/following:
+    get:
+      tags: [Follow]
+      summary: Récupérer les utilisateurs que je suis
+      security: [{ bearerAuth: [] }]
+      responses:
+        "201":
+          description: Liste des suivis
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MultipleFollowingUserResponse"
+
+  /list:
+    get:
+      tags: [List]
+      summary: Récupérer toutes les listes
+      security: [{ bearerAuth: [] }]
+      responses:
+        "201":
+          description: Listes récupérées
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MultipleListsResponse"
+    post:
+      tags: [List]
+      summary: Créer une liste
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateListRequest"
+      responses:
+        "201":
+          description: Liste créée
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListResponse"
+    put:
+      tags: [List]
+      summary: Mettre à jour une liste
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateListRequest"
+      responses:
+        "201":
+          description: Liste mise à jour
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListResponse"
+    delete:
+      tags: [List]
+      summary: Supprimer une liste
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id: { type: string }
+      responses:
+        "200":
+          description: Liste supprimée
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListResponse"
+
+  /list/get_by_id:
+    get:
+      tags: [List]
+      summary: Récupérer une liste par ID
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: id
+          in: query
+          required: true
+          schema: { type: string }
+      responses:
+        "201":
+          description: Liste trouvée
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ListResponse"
+
+  /list/get_by_user_id:
+    get:
+      tags: [List]
+      summary: Récupérer les listes d'un utilisateur
+      security: [{ bearerAuth: [] }]
+      parameters:
+        - name: user_id
+          in: query
+          required: true
+          schema: { type: string }
+      responses:
+        "201":
+          description: Listes trouvées
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MultipleListsResponse"
+
+  /game_list:
+    get:
+      tags: [GameList]
+      summary: Récupérer toutes les associations jeux-listes
+      security: [{ bearerAuth: [] }]
+      responses:
+        "201":
+          description: Associations récupérées
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MultipleGamesListsResponse"
+    post:
+      tags: [GameList]
+      summary: Ajouter un jeu à une liste
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateGameListRequest"
+      responses:
+        "201":
+          description: Association créée
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GameListResponse"
+    delete:
+      tags: [GameList]
+      summary: Supprimer un jeu d'une liste
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DeleteGameListRequest"
+      responses:
+        "200":
+          description: Association supprimée
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GameListResponse"
+
+  /game_list/get_by_list_id:
+    post:
+      tags: [GameList]
+      summary: Récupérer les jeux d'une liste
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                list_id: { type: string }
+      responses:
+        "201":
+          description: Jeux trouvés
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MultipleGamesListsResponse"
+
+  /game_list/name:
+    post:
+      tags: [GameList]
+      summary: Récupérer les jeux par nom de liste
+      security: [{ bearerAuth: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name: { type: string }
+      responses:
+        "200":
+          description: Jeux trouvés
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MultipleGamesListsResponse"
+
+  /game/top:
+    get:
+      tags: [Game]
+      summary: Récupérer les jeux les plus populaires
+      responses:
+        "200":
+          description: Jeux populaires
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GamesPreviewResponse"
+
+  /game/preview/{ids}:
+    get:
+      tags: [Game]
+      summary: Récupérer les aperçus de plusieurs jeux
+      parameters:
+        - name: ids
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Aperçus des jeux
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GamesPreviewResponse"
+
+  /game/{id}:
+    get:
+      tags: [Game]
+      summary: Récupérer les détails d'un jeu
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: integer }
+      responses:
+        "200":
+          description: Détails du jeu
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GameDetailsResponse"
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    # Auth
+    LoginUserRequest:
+      type: object
+      properties:
+        email: { type: string }
+        password: { type: string }
+      required: [email, password]
+    RegisterUserRequest:
+      type: object
+      properties:
+        pseudo: { type: string }
+        email: { type: string }
+        password: { type: string }
+      required: [pseudo, email, password]
+    RefreshTokenRequest:
+      type: object
+      properties:
+        refreshToken: { type: string }
+      required: [refreshToken]
+    AuthResponse:
+      type: object
+      properties:
+        pseudo: { type: string }
+        token: { type: string }
+        refreshToken: { type: string }
+        profile_picture_id: { type: integer }
+
+    # User
+    UserResponse:
+      type: object
+      properties:
+        id: { type: string }
+        pseudo: { type: string }
+        email: { type: string }
+        isAdmin: { type: boolean }
+        createdAt: { type: string, format: date-time }
+        deletedAt: { type: string, format: date-time }
+        profilePictureId: { type: integer }
+        bannerId: { type: integer }
+    UserUpdateRequest:
+      type: object
+      properties:
+        pseudo: { type: string }
+        email: { type: string }
+        password: { type: string }
+        isAdmin: { type: boolean }
+        createdAt: { type: string }
+        profilePictureId: { type: integer }
+        bannerId: { type: integer }
+    UserUpdateInfoRequest:
+      type: object
+      properties:
+        pseudo: { type: string }
+        email: { type: string }
+    UserUpdatePasswordRequest:
+      type: object
+      properties:
+        password: { type: string }
+
+    # Review
+    CreateReviewRequest:
+      type: object
+      properties:
+        game_id: { type: string }
+        rating: { type: integer }
+        review: { type: string }
+      required: [game_id, rating]
+    ReviewResponse:
+      type: object
+      properties:
+        id: { type: string }
+        gameId: { type: string }
+        userId: { type: string }
+        owner_pseudo: { type: string }
+        owner_picture: { type: integer }
+        rating: { type: integer }
+        review: { type: string }
+        likes: { type: integer }
+        createdAt: { type: string }
+        updatedAt: { type: string }
+        has_liked: { type: boolean }
+    MultipleReviewsResponse:
+      type: object
+      properties:
+        success: { type: boolean }
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/ReviewResponse"
+        message: { type: string }
+
+    # Follow
+    CreateFollowRequest:
+      type: object
+      properties:
+        followedId: { type: string }
+      required: [followedId]
+    FollowResponse:
+      type: object
+      properties:
+        followerId: { type: string }
+        followedId: { type: string }
+    FollowerUserResponse:
+      type: object
+      properties:
+        followerId: { type: string }
+        following: { $ref: "#/components/schemas/UserResponse" }
+    FollowingUserResponse:
+      type: object
+      properties:
+        followingId: { type: string }
+        follower: { $ref: "#/components/schemas/UserResponse" }
+    MultipleFollowerUserResponse:
+      type: object
+      properties:
+        success: { type: boolean }
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/FollowerUserResponse"
+    MultipleFollowingUserResponse:
+      type: object
+      properties:
+        success: { type: boolean }
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/FollowingUserResponse"
+
+    # List
+    CreateListRequest:
+      type: object
+      properties:
+        name: { type: string }
+        description: { type: string }
+        is_private: { type: boolean }
+    UpdateListRequest:
+      type: object
+      properties:
+        id: { type: string }
+        name: { type: string }
+        description: { type: string }
+        is_private: { type: boolean }
+    ListResponse:
+      type: object
+      properties:
+        id: { type: string }
+        userId: { type: string }
+        name: { type: string }
+        description: { type: string }
+        isPrivate: { type: boolean }
+    MultipleListsResponse:
+      type: object
+      properties:
+        success: { type: boolean }
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/ListResponse"
+
+    # GameList
+    CreateGameListRequest:
+      type: object
+      properties:
+        game_id: { type: string }
+        list_id: { type: string }
+    DeleteGameListRequest:
+      type: object
+      properties:
+        game_id: { type: string }
+        list_id: { type: string }
+    GameListResponse:
+      type: object
+      properties:
+        gameId: { type: string }
+        listId: { type: string }
+        addedAt: { type: string }
+        name: { type: string }
+        cover: { type: string }
+        aggregated_rating: { type: number }
+        developper: { type: string }
+    MultipleGamesListsResponse:
+      type: object
+      properties:
+        success: { type: boolean }
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/GameListResponse"
+
+    # Game
+    GameDetailsResponse:
+      type: object
+      properties:
+        id: { type: string }
+        name: { type: string }
+        aggregated_rating: { type: number }
+        genres:
+          type: array
+          items: { type: string }
+        platforms:
+          type: array
+          items: { type: string }
+        summary: { type: string }
+        cover_url: { type: string }
+        franchises:
+          type: array
+          items: { type: string }
+        first_release_date: { type: string }
+        involved_companies:
+          type: array
+          items: { type: string }
+        userRate: { type: number }
+    GamesPreviewResponse:
+      type: object
+      properties:
+        success: { type: boolean }
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              id: { type: string }
+              name: { type: string }
+              cover: { type: string }
+              aggregated_rating: { type: number }
+              involved_companies:
+                type: array
+                items: { type: string }
