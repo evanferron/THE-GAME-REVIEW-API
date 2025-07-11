@@ -12,7 +12,7 @@
     "swagger-ui-express": "5.0.1",
     "uuid": "11.1.0",
     "yamljs": "0.3.0",
-    "zod": "3.25.51"
+    "zod": "3.25.67"
   },
   "name": "the-game-review-api",
   "version": "1.0.0",
